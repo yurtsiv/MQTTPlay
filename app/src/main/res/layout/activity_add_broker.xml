@@ -6,24 +6,76 @@
     android:layout_height="match_parent"
     tools:context=".AddBrokerActivity">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/addBrokerToolbar"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="#3F51B5"
-        android:theme="@style/ToolbarStyle"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/abc_vector_test" />
+        android:layout_height="match_parent"
+        android:gravity="right"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="-92dp"
+        tools:layout_editor_absoluteY="390dp">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Add broker form"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addBrokerToolbar" />
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/addBrokerToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#3F51B5"
+            android:theme="@style/ToolbarStyle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="@drawable/abc_vector_test" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/labelTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Label">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/addressTextField"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:hint="Address">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/portTextField"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:hint="Port">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Use SSL" />
+
+        <Button
+            android:id="@+id/saveBrokerBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:text="Save" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
