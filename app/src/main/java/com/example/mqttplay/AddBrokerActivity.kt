@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.mqttplay.databinding.ActivityAddBrokerBinding
 import com.example.mqttplay.viewmodel.AddBrokerViewModel
@@ -23,7 +24,8 @@ class AddBrokerActivity : AppCompatActivity() {
                 this,
                 R.layout.activity_add_broker
         );
-        binding.liveData = AddBrokerViewModel()
+        var viewModel = AddBrokerViewModel()
+        binding.liveData = viewModel
         binding.lifecycleOwner = this;
 
         setupToolbar()

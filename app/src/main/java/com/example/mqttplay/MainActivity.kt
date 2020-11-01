@@ -1,11 +1,8 @@
 package com.example.mqttplay
 
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.AttributeSet
-import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mqttplay.adapter.BrokerItemAdapter
 import com.example.mqttplay.data.DataSource
