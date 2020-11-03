@@ -25,7 +25,7 @@ class BrokerItemAdapter(private val context: Context, private val dataSet: List<
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = dataSet[position]
-        holder.textView.text = "Hello"
+        holder.textView.text = item.label;
     }
 
     override fun getItemCount() = dataSet.size

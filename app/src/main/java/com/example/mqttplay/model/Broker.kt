@@ -13,7 +13,29 @@ data class Broker(
 //    val qos: Int,
 //    val useSSL: Boolean
 ) {
-    private val db = Firebase.firestore
+    companion object {
+        private val db = Firebase.firestore
+        const val COLLECTION = "brokers"
+
+        suspend fun listAll(): List<Broker> {
+            return suspendCoroutine { cont ->
+                db.collection(COLLECTION)
+                    .get()
+                    .addOnSuccessListener {documents ->
+                        val res = mutableListOf<Broker>()
+                        for (document in documents) {
+                            val label = document.data["label"] as String
+                            res.add(Broker(label))
+                        }
+
+                        cont.resume(res)
+                    }
+                    .addOnFailureListener {
+                        print(it)
+                    }
+            }
+        }
+    }
 
     suspend fun save(): String {
         val broker = hashMapOf(
@@ -21,7 +43,7 @@ data class Broker(
         )
 
         return suspendCoroutine { cont ->
-            db.collection("brokers")
+            db.collection(COLLECTION)
                 .add(broker)
                 .addOnSuccessListener { documentReference ->
                     cont.resume(documentReference.id)

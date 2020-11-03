@@ -6,10 +6,18 @@ import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mqttplay.adapter.BrokerItemAdapter
 import com.example.mqttplay.data.DataSource
+import com.example.mqttplay.model.Broker
+import com.example.mqttplay.viewmodel.BrokersListViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
+    private val viewModel = BrokersListViewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -17,13 +25,17 @@ class MainActivity : AppCompatActivity() {
         setupToolbar()
         setupBrokersList()
         setupAddBrokerBtn()
+
     }
 
     private fun setupBrokersList() {
-        val dataSet = DataSource().loadBrokers()
-        val recyclerView = findViewById<RecyclerView>(R.id.brokersRecyclerView)
-        recyclerView.adapter = BrokerItemAdapter(this, dataSet)
-        recyclerView.setHasFixedSize(true)
+        viewModel.brokers.observe(this, {brokers ->
+            val recyclerView = findViewById<RecyclerView>(R.id.brokersRecyclerView)
+            recyclerView.adapter = BrokerItemAdapter(this, brokers)
+            recyclerView.setHasFixedSize(true)
+        })
+
+        viewModel.loadBrokers()
     }
 
     private fun setupAddBrokerBtn() {
