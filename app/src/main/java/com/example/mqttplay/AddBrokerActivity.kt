@@ -3,63 +3,41 @@ package com.example.mqttplay
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.example.mqttplay.databinding.ActivityAddBrokerBinding
-import com.example.mqttplay.viewmodel.AddBrokerViewModel
+import androidx.fragment.app.Fragment
+import com.example.mqttplay.model.Broker
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.DisposableHandle
 import kotlinx.coroutines.withContext
 import java.lang.Exception
 
-class AddBrokerActivity : AppCompatActivity() {
-    lateinit var binding: ActivityAddBrokerBinding
-    private val viewModel = AddBrokerViewModel()
-
+class AddBrokerActivity : AppCompatActivity(), EditBrokerFragment.OnBrokerFormSaveListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_broker)
 
-        binding = DataBindingUtil.setContentView(
-            this,
-            R.layout.activity_add_broker
-        );
-        binding.liveData = viewModel
-        binding.lifecycleOwner = this
-
         setupToolbar()
-        setupSaveBtn()
     }
 
-    private fun setupSaveBtn() {
-        val saveBtn = findViewById<Button>(R.id.saveBrokerBtn)
-        saveBtn.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    viewModel.save()
-
-                    withContext(Dispatchers.Main) {
-                        showToast("Broker added")
-                        goToBrokersList()
-                    }
-                } catch (e: Exception) {
-                    withContext(Dispatchers.Main) {
-                        showToast(e.message ?: "An error occurred")
-                    }
-                }
-            }
+    override fun onAttachFragment(fragment: Fragment) {
+        if (fragment is EditBrokerFragment) {
+            fragment.setOnBrokerFormSaveListener(this)
         }
     }
 
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    override suspend fun onBrokerFormSave(broker: Broker) {
+        try {
+            broker.save()
+            withContext(Dispatchers.Main) {
+                showToastMainThread("Broker added")
+                goToBrokersList()
+            }
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                showToastMainThread(e.message ?: "An error occurred")
+            }
+        }
     }
 
     private fun setupToolbar() {
@@ -77,4 +55,7 @@ class AddBrokerActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    private fun showToastMainThread(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
 }

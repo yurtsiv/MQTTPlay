@@ -2,19 +2,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".AddBrokerActivity">
-
-    <data>
-
-        <variable
-            name="liveData"
-            type="com.example.mqttplay.viewmodel.AddBrokerViewModel" />
-    </data>
+    tools:context=".EditBrokerFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -35,108 +27,12 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:navigationIcon="@drawable/abc_vector_test" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/labelTextField"
+            <fragment
+                android:id="@+id/addBrokerFragment"
+                android:name="com.example.mqttplay.EditBrokerFragment"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Label">
+                android:layout_height="match_parent" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@={liveData.label}" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:weightSum="2">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/addressTextField"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:hint="Address">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="@={liveData.address}" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/portTextField"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:hint="Port">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="number"
-                        android:maxLength="4"
-                        android:text="@={liveData.port}" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="10dp"
-                android:text="Quality of service" />
-
-            <RadioGroup
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checkedButton="@={liveData.qualityOfServiceID}"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/QOS_0"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:tag="QOS_0"
-                    android:text="QoS 0" />
-
-                <RadioButton
-                    android:id="@+id/QOS_1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:tag="QOS_1"
-                    android:text="QoS 1" />
-
-                <RadioButton
-                    android:id="@+id/QOS_2"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:tag="QOS_@"
-                    android:text="QoS 2" />
-            </RadioGroup>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="@={liveData.useSSL}"
-                android:text="Use SSL" />
-
-            <Button
-                android:id="@+id/saveBrokerBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
-                android:enabled="@{liveData.saveBtnEnabled}"
-                android:text="Save" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

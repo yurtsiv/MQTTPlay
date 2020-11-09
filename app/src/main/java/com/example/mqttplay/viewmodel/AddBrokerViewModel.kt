@@ -22,7 +22,7 @@ class AddBrokerViewModel : ViewModel() {
     val port = MutableLiveData<String>()
     val qualityOfServiceID = MutableLiveData<Int>().apply { value = R.id.QOS_0 }
     val useSSL = MutableLiveData<Boolean>().apply {  value = true }
-    private val saving = MutableLiveData<Boolean>().apply { value = false }
+    val saving = MutableLiveData<Boolean>().apply { value = false }
     private val valid = MediatorLiveData<Boolean>().apply {
         addSource(label) {
             value = isFormValid()
@@ -44,23 +44,33 @@ class AddBrokerViewModel : ViewModel() {
         }
     }
 
-    suspend fun save(): String {
-        saving.postValue(true)
-
-        try {
-            return Broker(
-                label.value as String,
-                address.value as String,
-                port.value as String,
-                QOS_VALUES[qualityOfServiceID.value] as Int,
-                useSSL.value as Boolean
-            ).save();
-        } catch (e: Exception) {
-            throw e;
-        } finally {
-            saving.postValue(false)
-        }
+    fun constructBroker(): Broker {
+        return Broker(
+            label.value as String,
+            address.value as String,
+            port.value as String,
+            QOS_VALUES[qualityOfServiceID.value] as Int,
+            useSSL.value as Boolean
+        )
     }
+
+//    suspend fun save(): String {
+//        saving.postValue(true)
+//
+//        try {
+//            return Broker(
+//                label.value as String,
+//                address.value as String,
+//                port.value as String,
+//                QOS_VALUES[qualityOfServiceID.value] as Int,
+//                useSSL.value as Boolean
+//            ).save();
+//        } catch (e: Exception) {
+//            throw e;
+//        } finally {
+//            saving.postValue(false)
+//        }
+//    }
 
     private fun isSaveBtnEnabled(): Boolean {
         return !(saving.value ?: false) && (valid.value ?: false)

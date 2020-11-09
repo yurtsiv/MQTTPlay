@@ -9,11 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MQTTPlay">
+        <activity android:name=".AddBrokerActivity"></activity>
         <activity
-            android:name=".AddBrokerActivity"
-            android:theme="@style/Theme.MQTTPlay">
-
-        </activity>
+            android:name=".EditBrokerFragment"
+            android:theme="@style/Theme.MQTTPlay"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
