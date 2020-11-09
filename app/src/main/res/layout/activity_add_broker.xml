@@ -91,7 +91,7 @@
             <RadioGroup
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:checkedButton="@={liveData.qualityOfService}"
+                android:checkedButton="@={liveData.qualityOfServiceID}"
                 android:orientation="horizontal">
 
                 <RadioButton

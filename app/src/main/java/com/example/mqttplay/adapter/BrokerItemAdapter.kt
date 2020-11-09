@@ -13,7 +13,8 @@ class BrokerItemAdapter(private val context: Context, private val dataSet: List<
         RecyclerView.Adapter<BrokerItemAdapter.ItemViewHolder>() {
 
     class ItemViewHolder(private val view: View): RecyclerView.ViewHolder(view) {
-        val textView: TextView = view.findViewById(R.id.item_title)
+        val titleView: TextView = view.findViewById(R.id.item_title)
+        val subTitleView: TextView = view.findViewById(R.id.item_subtitle)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -25,7 +26,8 @@ class BrokerItemAdapter(private val context: Context, private val dataSet: List<
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = dataSet[position]
-        holder.textView.text = item.label;
+        holder.titleView.text = item.label;
+        holder.subTitleView.text = item.address;
     }
 
     override fun getItemCount() = dataSet.size

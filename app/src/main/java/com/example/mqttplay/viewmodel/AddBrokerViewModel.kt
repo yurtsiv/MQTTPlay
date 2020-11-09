@@ -1,23 +1,26 @@
 package com.example.mqttplay.viewmodel
 
 import android.util.Patterns
-import android.widget.Toast
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mqttplay.R
 import com.example.mqttplay.model.Broker
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO_PARALLELISM_PROPERTY_NAME
-import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class AddBrokerViewModel : ViewModel() {
+    companion object {
+        val QOS_VALUES = hashMapOf(
+            R.id.QOS_0 to 0,
+            R.id.QOS_1 to 1,
+            R.id.QOS_2 to 2
+        )
+    }
+
     val label = MutableLiveData<String>()
     val address = MutableLiveData<String>()
     val port = MutableLiveData<String>()
-    val qualityOfService = MutableLiveData<Int>().apply { value = R.id.QOS_0 }
+    val qualityOfServiceID = MutableLiveData<Int>().apply { value = R.id.QOS_0 }
     val useSSL = MutableLiveData<Boolean>().apply {  value = true }
     private val saving = MutableLiveData<Boolean>().apply { value = false }
     private val valid = MediatorLiveData<Boolean>().apply {
@@ -45,7 +48,13 @@ class AddBrokerViewModel : ViewModel() {
         saving.postValue(true)
 
         try {
-            return Broker(label.value ?: "").save();
+            return Broker(
+                label.value as String,
+                address.value as String,
+                port.value as String,
+                QOS_VALUES[qualityOfServiceID.value] as Int,
+                useSSL.value as Boolean
+            ).save();
         } catch (e: Exception) {
             throw e;
         } finally {

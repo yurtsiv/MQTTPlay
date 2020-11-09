@@ -5,15 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mqttplay.adapter.BrokerItemAdapter
-import com.example.mqttplay.data.DataSource
-import com.example.mqttplay.model.Broker
 import com.example.mqttplay.viewmodel.BrokersListViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
     private val viewModel = BrokersListViewModel()
