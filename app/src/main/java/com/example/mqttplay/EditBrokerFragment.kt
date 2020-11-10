@@ -9,7 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.example.mqttplay.databinding.FragmentEditBrokerBinding
 import com.example.mqttplay.model.Broker
-import com.example.mqttplay.viewmodel.AddBrokerViewModel
+import com.example.mqttplay.viewmodel.EditBrokerViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 class EditBrokerFragment : Fragment() {
     lateinit var onSave: OnBrokerFormSaveListener
     lateinit var binding: FragmentEditBrokerBinding
-    private val viewModel = AddBrokerViewModel()
+    private val viewModel = EditBrokerViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,6 +29,10 @@ class EditBrokerFragment : Fragment() {
         binding.lifecycleOwner = this
 
         return binding.root;
+    }
+
+    fun fillForm(brokerId: String) {
+        viewModel.fillForm(brokerId)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

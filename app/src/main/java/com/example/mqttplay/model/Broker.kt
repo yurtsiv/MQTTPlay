@@ -1,5 +1,6 @@
 package com.example.mqttplay.model
 
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import kotlin.coroutines.resume
@@ -14,19 +15,21 @@ data class Broker(
     val address: String,
     val port: String,
     val qos: Int,
-    val useSSL: Boolean
+    val useSSL: Boolean,
+    val id: String? = null
 ) {
     companion object {
         private val db = Firebase.firestore
         const val COLLECTION = "brokers"
 
-        private fun docToBroker(document: QueryDocumentSnapshot): Broker {
+        private fun docToBroker(document: DocumentSnapshot): Broker {
             return Broker(
-                document.data["label"] as String,
-                document.data["address"] as String,
-                document.data["port"] as String,
-                (document.data["qos"] as Long).toInt(),
-                document.data["useSSL"] as Boolean,
+                document.data?.get("label") as String,
+                document.data?.get("address") as String,
+                document.data?.get("port") as String,
+                (document.data?.get("qos") as Long).toInt(),
+                document.data?.get("useSSL") as Boolean,
+                document.id
             )
         }
 
@@ -44,7 +47,7 @@ data class Broker(
             return suspendCoroutine { cont ->
                 db.collection(COLLECTION)
                     .get()
-                    .addOnSuccessListener {documents ->
+                    .addOnSuccessListener { documents ->
                         val res = documents.map { docToBroker(it) }
                         cont.resume(res)
                     }
@@ -53,9 +56,22 @@ data class Broker(
                     }
             }
         }
+
+        suspend fun fetchSingle(id: String): Broker {
+            return suspendCoroutine { cont ->
+                db.document("${COLLECTION}/${id}")
+                    .get()
+                    .addOnSuccessListener { doc ->
+                        cont.resume(docToBroker(doc))
+                    }
+                    .addOnFailureListener {
+                        print(it)
+                    }
+            }
+        }
     }
 
-    suspend fun save(): String {
+    private suspend fun create(): String {
         return suspendCoroutine { cont ->
             db.collection(COLLECTION)
                 .add(brokerToHashMap(this))
@@ -65,7 +81,27 @@ data class Broker(
                 .addOnFailureListener { e ->
                     cont.resumeWithException(e)
                 }
+        }
+    }
 
+    private suspend fun edit(): String {
+        return suspendCoroutine { cont ->
+            db.document("${COLLECTION}/${id}")
+                .set(brokerToHashMap(this))
+                .addOnSuccessListener {
+                    cont.resume(id ?: "")
+                }
+                .addOnFailureListener { e ->
+                    cont.resumeWithException(e)
+                }
+        }
+    }
+
+    suspend fun save(): String {
+        return if (id == null) {
+            create();
+        } else {
+            edit();
         }
     }
 }

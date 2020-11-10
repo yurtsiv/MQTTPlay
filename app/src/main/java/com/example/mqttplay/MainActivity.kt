@@ -3,6 +3,9 @@ package com.example.mqttplay
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.MenuItem
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mqttplay.adapter.BrokerItemAdapter
 import com.example.mqttplay.viewmodel.BrokersListViewModel
@@ -22,6 +25,26 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.remove_broker_menu_item ->
+                showToast("Not implemented")
+            R.id.edit_broker_menu_item -> {
+                val brokerId = viewModel.brokers.value?.get(item.groupId)?.id;
+                Log.v("BrokerID", item.groupId.toString());
+                if (brokerId != null) goToBrokerEdit(brokerId)
+            }
+        }
+        return false;
+    }
+
+    private fun goToBrokerEdit(brokerId: String) {
+        val intent = Intent(this, EditBrokerActivity::class.java)
+        intent.putExtra("brokerId", brokerId);
+
+        startActivity(intent)
+    }
+
     private fun setupBrokersList() {
         viewModel.brokers.observe(this, {brokers ->
             val recyclerView = findViewById<RecyclerView>(R.id.brokersRecyclerView)
@@ -35,7 +58,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupAddBrokerBtn() {
         val addBrokerBtn = findViewById<FloatingActionButton>( R.id.addBrokerBtn)
         addBrokerBtn.setOnClickListener {
-            intent = Intent(this, AddBrokerActivity::class.java)
+            val intent = Intent(this, AddBrokerActivity::class.java)
             startActivity(intent)
         }
     }
@@ -44,5 +67,9 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<MaterialToolbar>(R.id.mainActivityToolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.title = "Brokers"
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

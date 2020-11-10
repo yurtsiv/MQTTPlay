@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".AddBrokerActivity">
+    tools:context=".EditBrokerActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
             tools:layout_editor_absoluteY="390dp">
 
             <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/addBrokerToolbar"
+                android:id="@+id/editBrokerToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="#3F51B5"
@@ -28,7 +28,7 @@
                 app:navigationIcon="@drawable/abc_vector_test" />
 
             <fragment
-                android:id="@+id/addBrokerFragment"
+                android:id="@+id/editBrokerFragment"
                 android:name="com.example.mqttplay.EditBrokerFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

@@ -11,16 +11,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.lang.Exception
 
-class AddBrokerActivity : AppCompatActivity(), EditBrokerFragment.OnBrokerFormSaveListener {
+class EditBrokerActivity : AppCompatActivity(), EditBrokerFragment.OnBrokerFormSaveListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_broker)
+        setContentView(R.layout.activity_edit_broker)
 
         setupToolbar()
     }
 
     override fun onAttachFragment(fragment: Fragment) {
         if (fragment is EditBrokerFragment) {
+            val brokerId = intent.extras?.get("brokerId") as String;
+            fragment.fillForm(brokerId)
             fragment.setOnBrokerFormSaveListener(this)
         }
     }
@@ -29,7 +31,7 @@ class AddBrokerActivity : AppCompatActivity(), EditBrokerFragment.OnBrokerFormSa
         try {
             broker.save()
             withContext(Dispatchers.Main) {
-                showToast("Broker added")
+                showToast("Broker saved")
                 goToBrokersList()
             }
         } catch (e: Exception) {
@@ -40,13 +42,14 @@ class AddBrokerActivity : AppCompatActivity(), EditBrokerFragment.OnBrokerFormSa
     }
 
     private fun setupToolbar() {
-        val toolbar = findViewById<MaterialToolbar>(R.id.addBrokerToolbar)
+        val toolbar = findViewById<MaterialToolbar>(R.id.editBrokerToolbar)
 
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener {
             goToBrokersList()
         }
-        supportActionBar?.title = "Add broker"
+
+        supportActionBar?.title = "Edit broker"
     }
 
     private fun goToBrokersList() {

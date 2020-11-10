@@ -5,10 +5,9 @@
     tools:context=".EditBrokerFragment">
 
     <data>
-
         <variable
             name="liveData"
-            type="com.example.mqttplay.viewmodel.AddBrokerViewModel" />
+            type="com.example.mqttplay.viewmodel.EditBrokerViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
