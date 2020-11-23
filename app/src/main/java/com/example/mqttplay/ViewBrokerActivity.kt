@@ -2,6 +2,7 @@ package com.example.mqttplay
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.example.mqttplay.databinding.ActivityViewBrokerBinding
 import com.example.mqttplay.viewmodel.ViewBrokerViewModel
@@ -22,7 +23,17 @@ class ViewBrokerActivity : AppCompatActivity() {
         setupToolbar();
 
         val brokerId = intent.extras?.get("brokerId") as String
-        viewModel.initialize(brokerId)
+        viewModel.initialize(this, brokerId)
+
+        viewModel.toast.observe(this,  {message ->
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        viewModel.broker?.clearMqttResources()
     }
 
     private fun setupToolbar() {
