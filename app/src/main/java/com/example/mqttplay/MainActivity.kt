@@ -22,7 +22,6 @@ class MainActivity : AppCompatActivity() {
         setupToolbar()
         setupBrokersList()
         setupAddBrokerBtn()
-
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
@@ -31,7 +30,6 @@ class MainActivity : AppCompatActivity() {
                 showToast("Not implemented")
             R.id.edit_broker_menu_item -> {
                 val brokerId = viewModel.brokers.value?.get(item.groupId)?.id;
-                Log.v("BrokerID", item.groupId.toString());
                 if (brokerId != null) goToBrokerEdit(brokerId)
             }
         }
