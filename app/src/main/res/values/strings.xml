@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">MQTT Play</string>
+
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
+    <string name="generic_error">An error occured</string>
+
+    <string name="connected_to_broker">Connected</string>
+    <string name="failed_to_connect">Failed to connect</string>
+    <string name="broker_remove_confirm">Do you really want to delete %1$s?</string>
+    <string name="broker_save_success">Broker saved</string>
+    <string name="broker_add_success">Broker added</string>
+    <string name="brokers_list_activity_title">Brokers</string>
+    <string name="edit_broker_activity_title">Edit broker</string>
+    <string name="add_broker_activity_title">Add broker</string>
 </resources>

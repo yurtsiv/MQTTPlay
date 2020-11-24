@@ -31,12 +31,12 @@ class EditBrokerActivity : AppCompatActivity(), EditBrokerFragment.OnBrokerFormS
         try {
             broker.save()
             withContext(Dispatchers.Main) {
-                showToast("Broker saved")
+                showToast(getString(R.string.broker_save_success))
                 goToBrokersList()
             }
         } catch (e: Exception) {
             withContext(Dispatchers.Main) {
-                showToast(e.message ?: "An error occurred")
+                showToast(e.message ?: getString(R.string.generic_error))
             }
         }
     }
@@ -49,7 +49,7 @@ class EditBrokerActivity : AppCompatActivity(), EditBrokerFragment.OnBrokerFormS
             goToBrokersList()
         }
 
-        supportActionBar?.title = "Edit broker"
+        supportActionBar?.title = getString(R.string.edit_broker_activity_title)
     }
 
     private fun goToBrokersList() {

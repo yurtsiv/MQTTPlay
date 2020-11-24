@@ -48,11 +48,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun confirmBrokerRemove(broker: Broker) {
         val mBuilder = AlertDialog.Builder(this)
-        mBuilder.setMessage("Do you really want to delete ${broker.label}?")
-        mBuilder.setPositiveButton("Yes") { dialog, which ->
+        mBuilder.setMessage(getString(R.string.broker_remove_confirm, broker.label))
+        mBuilder.setPositiveButton(R.string.yes) { dialog, which ->
             viewModel.removeBroker(broker)
         }
-        mBuilder.setNegativeButton("Cancel") {dialog, which -> }
+        mBuilder.setNegativeButton(R.string.cancel) {dialog, which -> }
         mBuilder.show()
     }
 
@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupToolbar() {
         val toolbar = findViewById<MaterialToolbar>(R.id.mainActivityToolbar)
         setSupportActionBar(toolbar)
-        supportActionBar?.title = "Brokers"
+        supportActionBar?.title = getString(R.string.brokers_list_activity_title)
     }
 
     private fun showToast(message: String) {
