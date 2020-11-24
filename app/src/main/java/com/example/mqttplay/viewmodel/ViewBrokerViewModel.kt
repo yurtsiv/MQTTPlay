@@ -21,7 +21,7 @@ class ViewBrokerViewModel : ViewModel() {
 
             activityTitle.postValue(broker.label)
 
-            val connected = broker.connect(context);
+            val connected = broker.connect(context)
 
             brokerConnected.postValue(connected)
 

@@ -64,7 +64,7 @@ class EditBrokerViewModel : ViewModel() {
     }
 
     fun fillForm(brokerId: String) {
-        this.brokerId = brokerId;
+        this.brokerId = brokerId
 
         CoroutineScope(Dispatchers.IO).launch {
             val broker = Broker.fetchSingle(brokerId)
@@ -86,7 +86,7 @@ class EditBrokerViewModel : ViewModel() {
     }
 
     private fun isPortValid(): Boolean {
-        val value: String? = port.value;
+        val value: String? = port.value
         return value != null && value.isNotBlank()
     }
 

@@ -58,8 +58,8 @@ class BrokerItemAdapter(private val context: Context, private val dataSet: List<
         holder.titleView.text = item.label
         holder.subTitleView.text = item.address
         holder.itemView.setOnClickListener {
-            val intent = Intent(context, ViewBrokerActivity::class.java);
-            intent.putExtra("brokerId", item.id);
+            val intent = Intent(context, ViewBrokerActivity::class.java)
+            intent.putExtra("brokerId", item.id)
             context.startActivity(intent)
         };
     }

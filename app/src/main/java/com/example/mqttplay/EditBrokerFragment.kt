@@ -28,7 +28,7 @@ class EditBrokerFragment : Fragment() {
         binding.liveData = viewModel
         binding.lifecycleOwner = this
 
-        return binding.root;
+        return binding.root
     }
 
     fun fillForm(brokerId: String) {

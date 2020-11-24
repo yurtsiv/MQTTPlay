@@ -9,7 +9,7 @@ import com.example.mqttplay.viewmodel.ViewBrokerViewModel
 import com.google.android.material.appbar.MaterialToolbar
 
 class ViewBrokerActivity : AppCompatActivity() {
-    lateinit var binding: ActivityViewBrokerBinding;
+    lateinit var binding: ActivityViewBrokerBinding
     private val viewModel = ViewBrokerViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,7 +20,7 @@ class ViewBrokerActivity : AppCompatActivity() {
         binding.liveData = viewModel
         binding.lifecycleOwner = this
 
-        setupToolbar();
+        setupToolbar()
 
         val brokerId = intent.extras?.get("brokerId") as String
         viewModel.initialize(this, brokerId)

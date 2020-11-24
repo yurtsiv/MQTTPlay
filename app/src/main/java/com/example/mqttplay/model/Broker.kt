@@ -112,6 +112,23 @@ data class Broker(
         }
     }
 
+    suspend fun remove() {
+        return suspendCoroutine { cont ->
+            if (id == null) {
+                cont.resumeWithException(Exception("Broker is not saved"))
+            } else {
+                db.document("${COLLECTION}/${id}")
+                    .delete()
+                    .addOnSuccessListener {
+                        cont.resume(Unit)
+                    }
+                    .addOnFailureListener {e ->
+                        cont.resumeWithException(e)
+                    }
+            }
+        }
+    }
+
     fun clearMqttResources() {
         mqttClient?.unregisterResources()
     }
