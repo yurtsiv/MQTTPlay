@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/brokersListFragment">
+
+    <fragment
+        android:id="@+id/brokersListFragment"
+        android:name="com.example.mqttplay.view.BrokersListFragment"
+        android:label="fragment_brokers_list"
+        tools:layout="@layout/fragment_brokers_list"
+        >
+        <action
+            android:id="@+id/action_brokersListFragment_to_viewBrokerFragment"
+            app:destination="@id/viewBrokerFragment" />
+        <action
+            android:id="@+id/action_brokersListFragment_to_addBrokerFragment2"
+            app:destination="@id/addBrokerFragment2" />
+        <action
+            android:id="@+id/action_brokersListFragment_to_editBrokerFragment2"
+            app:destination="@id/editBrokerFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/viewBrokerFragment"
+        android:name="com.example.mqttplay.view.ViewBrokerFragment"
+        android:label="fragment_view_broker"
+        tools:layout="@layout/fragment_view_broker" >
+        <action
+            android:id="@+id/action_viewBrokerFragment_to_brokersListFragment"
+            app:destination="@id/brokersListFragment" />
+        <argument
+            android:name="brokerId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/editBrokerFragment2"
+        android:name="com.example.mqttplay.view.EditBrokerFragment"
+        android:label="fragment_edit_broker"
+        tools:layout="@layout/fragment_edit_broker" >
+        <argument
+            android:name="brokerId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_editBrokerFragment2_to_brokersListFragment"
+            app:destination="@id/brokersListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addBrokerFragment2"
+        android:name="com.example.mqttplay.view.AddBrokerFragment"
+        android:label="fragment_add_broker"
+        tools:layout="@layout/fragment_add_broker" >
+        <action
+            android:id="@+id/action_addBrokerFragment2_to_brokersListFragment"
+            app:destination="@id/brokersListFragment" />
+    </fragment>
+</navigation>

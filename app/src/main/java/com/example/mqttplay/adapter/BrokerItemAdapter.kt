@@ -2,22 +2,25 @@ package com.example.mqttplay.adapter
 
 import android.content.Context
 import android.content.Intent
-import android.text.Layout
 import android.view.*
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mqttplay.R
-import com.example.mqttplay.ViewBrokerActivity
+import com.example.mqttplay.view.ViewBrokerFragment
 import com.example.mqttplay.model.Broker
 
-class BrokerItemAdapter(private val context: Context, private val dataSet: List<Broker>) :
+class BrokerItemAdapter(
+    private val context: Context,
+    private val dataSet: List<Broker>,
+    private val onItemClick: (broker: Broker) -> Unit
+) :
     RecyclerView.Adapter<BrokerItemAdapter.ItemViewHolder>() {
 
     class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view),
         View.OnCreateContextMenuListener {
 
-        val itemView: LinearLayout = view.findViewById(R.id.broker_list_item);
         val titleView: TextView = view.findViewById(R.id.item_title)
         val subTitleView: TextView = view.findViewById(R.id.item_subtitle)
 
@@ -58,9 +61,7 @@ class BrokerItemAdapter(private val context: Context, private val dataSet: List<
         holder.titleView.text = item.label
         holder.subTitleView.text = item.address
         holder.itemView.setOnClickListener {
-            val intent = Intent(context, ViewBrokerActivity::class.java)
-            intent.putExtra("brokerId", item.id)
-            context.startActivity(intent)
+            onItemClick(item)
         };
     }
 

@@ -10,7 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class EditBrokerViewModel : ViewModel() {
+class BrokerFormViewModel : ViewModel() {
     companion object {
         val QOS_ID_TO_VALUE = hashMapOf(
             R.id.QOS_0 to 0,

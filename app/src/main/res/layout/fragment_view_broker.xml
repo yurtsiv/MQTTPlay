@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.ViewBrokerFragment">
+
+    <data>
+
+        <variable
+            name="liveData"
+            type="com.example.mqttplay.viewmodel.ViewBrokerViewModel" />
+    </data>
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:enabled="@{liveData.brokerConnected}"
+        android:onClick="@{() -> liveData.sendTestMessage()}"
+        android:text="Test message" />
+</layout>

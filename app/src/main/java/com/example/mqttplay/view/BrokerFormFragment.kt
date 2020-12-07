@@ -1,4 +1,4 @@
-package com.example.mqttplay
+package com.example.mqttplay.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,24 +7,25 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import com.example.mqttplay.databinding.FragmentEditBrokerBinding
+import com.example.mqttplay.R
+import com.example.mqttplay.databinding.FragmentBrokerFormBinding
 import com.example.mqttplay.model.Broker
-import com.example.mqttplay.viewmodel.EditBrokerViewModel
+import com.example.mqttplay.viewmodel.BrokerFormViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class EditBrokerFragment : Fragment() {
+class BrokerFormFragment : Fragment() {
     lateinit var onSave: OnBrokerFormSaveListener
-    lateinit var binding: FragmentEditBrokerBinding
-    private val viewModel = EditBrokerViewModel()
+    lateinit var binding: FragmentBrokerFormBinding
+    private val viewModel = BrokerFormViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_edit_broker, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_broker_form, container, false)
         binding.liveData = viewModel
         binding.lifecycleOwner = this
 
