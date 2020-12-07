@@ -73,7 +73,7 @@ class BrokersListFragment : Fragment() {
     private fun onItemClick(broker: Broker) {
         if (broker.id != null) {
             val action =
-                BrokersListFragmentDirections.actionBrokersListFragmentToViewBrokerFragment(broker.id)
+                BrokersListFragmentDirections.actionBrokersListFragmentToViewBrokerFragment(broker.id, broker.label)
             findNavController().navigate(action)
         }
     }

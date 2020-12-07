@@ -8,9 +8,8 @@
     <fragment
         android:id="@+id/brokersListFragment"
         android:name="com.example.mqttplay.view.BrokersListFragment"
-        android:label="fragment_brokers_list"
-        tools:layout="@layout/fragment_brokers_list"
-        >
+        android:label="@string/brokers_list_activity_title"
+        tools:layout="@layout/fragment_brokers_list">
         <action
             android:id="@+id/action_brokersListFragment_to_viewBrokerFragment"
             app:destination="@id/viewBrokerFragment" />
@@ -24,20 +23,23 @@
     <fragment
         android:id="@+id/viewBrokerFragment"
         android:name="com.example.mqttplay.view.ViewBrokerFragment"
-        android:label="fragment_view_broker"
-        tools:layout="@layout/fragment_view_broker" >
+        android:label="{brokerLabel}"
+        tools:layout="@layout/fragment_view_broker">
         <action
             android:id="@+id/action_viewBrokerFragment_to_brokersListFragment"
             app:destination="@id/brokersListFragment" />
         <argument
             android:name="brokerId"
             app:argType="string" />
+        <argument
+            android:name="brokerLabel"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/editBrokerFragment2"
         android:name="com.example.mqttplay.view.EditBrokerFragment"
-        android:label="fragment_edit_broker"
-        tools:layout="@layout/fragment_edit_broker" >
+        android:label="@string/edit_broker_activity_title"
+        tools:layout="@layout/fragment_edit_broker">
         <argument
             android:name="brokerId"
             app:argType="string" />
@@ -48,8 +50,8 @@
     <fragment
         android:id="@+id/addBrokerFragment2"
         android:name="com.example.mqttplay.view.AddBrokerFragment"
-        android:label="fragment_add_broker"
-        tools:layout="@layout/fragment_add_broker" >
+        android:label="@string/add_broker_activity_title"
+        tools:layout="@layout/fragment_add_broker">
         <action
             android:id="@+id/action_addBrokerFragment2_to_brokersListFragment"
             app:destination="@id/brokersListFragment" />
