@@ -1,16 +1,19 @@
 package com.example.mqttplay.model
 
-import android.content.Context
 import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.QueryDocumentSnapshot
-import com.google.firebase.firestore.QuerySnapshot
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 import java.lang.Exception
@@ -60,7 +63,7 @@ data class Broker(
                         cont.resume(res)
                     }
                     .addOnFailureListener {
-                        print(it)
+                        cont.resumeWithException(it)
                     }
             }
         }
@@ -73,7 +76,7 @@ data class Broker(
                         cont.resume(docToBroker(doc))
                     }
                     .addOnFailureListener {
-                        print(it)
+                        cont.resumeWithException(it)
                     }
             }
         }
@@ -123,7 +126,7 @@ data class Broker(
                     .addOnSuccessListener {
                         cont.resume(Unit)
                     }
-                    .addOnFailureListener {e ->
+                    .addOnFailureListener { e ->
                         cont.resumeWithException(e)
                     }
             }
@@ -134,58 +137,55 @@ data class Broker(
         mqttClient?.unregisterResources()
     }
 
-    suspend fun connect(context: Context): Boolean {
-        val serverURI = "tcp://${address}:${port}";
+    fun connect(mqttClient: MqttAndroidClient): Flow<String> {
+        this.mqttClient = mqttClient
 
-        mqttClient = MqttAndroidClient(context, serverURI, "kotlin_client")
-
-        try {
-            mqttClient.setCallback(object : MqttCallback {
-                override fun messageArrived(topic: String?, message: MqttMessage?) {
-                    Log.d(TAG, "Receive message: ${message.toString()} from topic: $topic")
-                }
-
-                override fun connectionLost(cause: Throwable?) {
-                    Log.d(TAG, "Connection lost ${cause.toString()}")
-                }
-
-                override fun deliveryComplete(token: IMqttDeliveryToken?) {
-                }
-            })
-        } catch (e: MqttException) {
-            e.printStackTrace()
-
-        }
-
-        val options = MqttConnectOptions()
-
-        return suspendCoroutine {cont ->
+        return callbackFlow {
             try {
+                mqttClient.setCallback(object : MqttCallback {
+                    override fun messageArrived(topic: String?, message: MqttMessage?) {
+                        offer("MESSAGE_RECEIVED")
+                    }
+
+                    override fun connectionLost(cause: Throwable?) {
+                        offer("CONNECTION_LOST")
+                    }
+
+                    override fun deliveryComplete(token: IMqttDeliveryToken?) {
+                    }
+                })
+
+                val options = MqttConnectOptions()
                 mqttClient.connect(options, null, object : IMqttActionListener {
                     override fun onSuccess(asyncActionToken: IMqttToken?) {
-                        Log.d(TAG, "Connection success")
-                        cont.resume(true)
+                        offer("CONNECTED")
                     }
 
                     override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
-                        Log.d(TAG, "Connection failure ${exception?.message}")
-                        cont.resume(false)
+                        offer(exception?.message)
                     }
                 })
-            } catch(e: MqttException) {
-                e.printStackTrace()
+            } catch (e: MqttException) {
+                close(e);
             }
+
+            awaitClose { cancel() }
         }
     }
 
-    fun publishMessage(topic: String, message: String, msgQos: Int = qos, retained: Boolean = false) {
+    fun publishMessage(
+        topic: String,
+        message: String,
+        msgQos: Int = qos,
+        retained: Boolean = false
+    ) {
         if (mqttClient == null || !mqttClient.isConnected) {
             throw Exception("Broker is not connected")
         }
 
         val mqttMsg = MqttMessage()
         mqttMsg.payload = message.toByteArray()
-        mqttMsg.qos = qos
+        mqttMsg.qos = msgQos
         mqttMsg.isRetained = retained
 
         try {

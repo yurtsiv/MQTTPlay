@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import com.example.mqttplay.model.Broker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import org.eclipse.paho.android.service.MqttAndroidClient
 
 class ViewBrokerViewModel : ViewModel() {
     lateinit var broker: Broker;
@@ -21,11 +23,17 @@ class ViewBrokerViewModel : ViewModel() {
 
             activityTitle.postValue(broker.label)
 
-            val connected = broker.connect(context)
+            val serverURI = "tcp://${broker.address}:${broker.port}";
 
-            brokerConnected.postValue(connected)
+            val mqttClient = MqttAndroidClient(context, serverURI, "kotlin_client")
 
-            toast.postValue(if (connected) "Connected" else "Failed to connect" )
+            broker
+                .connect(mqttClient)
+                .collect {
+                    brokerConnected.postValue(it == "CONNECTED")
+                    toast.postValue(it)
+                }
+
         }
     }
 
