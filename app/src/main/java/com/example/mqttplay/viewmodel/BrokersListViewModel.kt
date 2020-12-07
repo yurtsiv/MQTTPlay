@@ -10,11 +10,20 @@ import java.lang.Exception
 
 class BrokersListViewModel : ViewModel() {
     val brokers = MutableLiveData<List<Broker>>()
-    val toast = MutableLiveData<String>();
+    val toast = MutableLiveData<String>()
+    val loading = MutableLiveData<Boolean>().apply { value = false }
 
     fun loadBrokers() {
         CoroutineScope(Dispatchers.IO).launch {
-            brokers.postValue(Broker.listAll())
+            loading.postValue(true)
+
+            try {
+                brokers.postValue(Broker.listAll())
+            } catch (e: Exception) {
+                toast.postValue(e.message)
+            }
+
+            loading.postValue(false)
         }
     }
 

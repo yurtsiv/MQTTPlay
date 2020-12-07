@@ -13,15 +13,12 @@ import org.eclipse.paho.android.service.MqttAndroidClient
 class ViewBrokerViewModel : ViewModel() {
     lateinit var broker: Broker;
 
-    val activityTitle = MutableLiveData<String>().apply { value = "Broker" }
     val brokerConnected = MutableLiveData<Boolean>().apply { value = false }
     val toast = MutableLiveData<String>()
 
     fun initialize(context: Context, brokerId: String) {
         CoroutineScope(Dispatchers.IO).launch {
             broker = Broker.fetchSingle(brokerId)
-
-            activityTitle.postValue(broker.label)
 
             val serverURI = "tcp://${broker.address}:${broker.port}";
 

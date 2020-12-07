@@ -26,6 +26,7 @@ class EditBrokerFragment : Fragment(), BrokerFormFragment.OnBrokerFormSaveListen
 
         return view;
     }
+
     override fun onAttachFragment(fragment: Fragment) {
         if (fragment is BrokerFormFragment) {
             val brokerId = args.brokerId

@@ -7,16 +7,20 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mqttplay.R
 import com.example.mqttplay.adapter.BrokerItemAdapter
+import com.example.mqttplay.databinding.FragmentBrokersListBinding
 import com.example.mqttplay.model.Broker
 import com.example.mqttplay.viewmodel.BrokersListViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class BrokersListFragment : Fragment() {
+    lateinit var binding: FragmentBrokersListBinding
     private val viewModel = BrokersListViewModel()
 
     override fun onCreateView(
@@ -24,9 +28,11 @@ class BrokersListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_brokers_list, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_brokers_list, container, false)
+        binding.liveData = viewModel
+        binding.lifecycleOwner = this
 
-        return view;
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -34,6 +40,10 @@ class BrokersListFragment : Fragment() {
 
         setupBrokersList()
         setupAddBrokerBtn()
+
+        viewModel.toast.observe(viewLifecycleOwner) {
+            showToast(it)
+        }
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
@@ -100,5 +110,9 @@ class BrokersListFragment : Fragment() {
                 BrokersListFragmentDirections.actionBrokersListFragmentToAddBrokerFragment2();
             findNavController().navigate(action)
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(view?.context, message, Toast.LENGTH_SHORT).show()
     }
 }

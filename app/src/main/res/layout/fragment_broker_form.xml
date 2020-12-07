@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".view.BrokerFormFragment">
 
     <data>
+
+        <import type="android.view.View" />
 
         <variable
             name="liveData"
             type="com.example.mqttplay.viewmodel.BrokerFormViewModel" />
     </data>
 
-
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="right"
         android:orientation="vertical"
-        android:padding="7dp">
+        android:padding="7dp"
+        tools:layout_editor_absoluteX="76dp"
+        tools:layout_editor_absoluteY="0dp">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/labelTextField"

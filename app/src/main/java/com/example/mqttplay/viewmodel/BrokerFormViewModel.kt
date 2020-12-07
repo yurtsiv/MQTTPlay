@@ -1,6 +1,7 @@
 package com.example.mqttplay.viewmodel
 
 import android.util.Patterns
+import android.widget.Toast
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,7 +9,9 @@ import com.example.mqttplay.R
 import com.example.mqttplay.model.Broker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class BrokerFormViewModel : ViewModel() {
     companion object {
@@ -28,9 +31,11 @@ class BrokerFormViewModel : ViewModel() {
     val address = MutableLiveData<String>()
     val port = MutableLiveData<String>()
     val qualityOfServiceID = MutableLiveData<Int>().apply { value = R.id.QOS_0 }
-    val useSSL = MutableLiveData<Boolean>().apply {  value = true }
+    val useSSL = MutableLiveData<Boolean>().apply { value = true }
 
+    val toast = MutableLiveData<String>()
     val saving = MutableLiveData<Boolean>().apply { value = false }
+
     private val valid = MediatorLiveData<Boolean>().apply {
         addSource(label) {
             value = isFormValid()
@@ -67,13 +72,17 @@ class BrokerFormViewModel : ViewModel() {
         this.brokerId = brokerId
 
         CoroutineScope(Dispatchers.IO).launch {
-            val broker = Broker.fetchSingle(brokerId)
+            try {
+                val broker = Broker.fetchSingle(brokerId)
 
-            label.postValue(broker.label)
-            address.postValue(broker.address)
-            port.postValue(broker.port)
-            qualityOfServiceID.postValue(QOS_VALUE_TO_ID[broker.qos])
-            useSSL.postValue(broker.useSSL)
+                label.postValue(broker.label)
+                address.postValue(broker.address)
+                port.postValue(broker.port)
+                qualityOfServiceID.postValue(QOS_VALUE_TO_ID[broker.qos])
+                useSSL.postValue(broker.useSSL)
+            } catch (e: Exception) {
+                toast.postValue(e.message)
+            }
         }
     }
 

@@ -12,6 +12,8 @@ class TextInputWithPlaceholder : TextInputEditText {
     private val placeholder = hint
 
     init {
+        revealOnFocusHint = true
+
         hint = ""
         onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {

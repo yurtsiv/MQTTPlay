@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.example.mqttplay.R
@@ -28,18 +29,24 @@ class BrokerFormFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_broker_form, container, false)
         binding.liveData = viewModel
         binding.lifecycleOwner = this
+        binding.executePendingBindings()
 
         return binding.root
     }
 
-    fun fillForm(brokerId: String) {
-        viewModel.fillForm(brokerId)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         setupSaveBtn()
+
+        viewModel.toast.observe(viewLifecycleOwner) {
+            showToast(it)
+        }
+    }
+
+    fun fillForm(brokerId: String) {
+        viewModel.fillForm(brokerId)
     }
 
     fun setOnBrokerFormSaveListener(callback: OnBrokerFormSaveListener) {
@@ -62,5 +69,9 @@ class BrokerFormFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(view?.context, message, Toast.LENGTH_SHORT).show()
     }
 }
