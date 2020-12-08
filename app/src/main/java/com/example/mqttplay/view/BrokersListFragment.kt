@@ -17,6 +17,7 @@ import com.example.mqttplay.adapter.BrokerItemAdapter
 import com.example.mqttplay.databinding.FragmentBrokersListBinding
 import com.example.mqttplay.model.Broker
 import com.example.mqttplay.viewmodel.BrokersListViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class BrokersListFragment : Fragment() {
@@ -64,7 +65,7 @@ class BrokersListFragment : Fragment() {
     }
 
     private fun confirmBrokerRemove(broker: Broker) {
-        val mBuilder = AlertDialog.Builder(view?.context)
+        val mBuilder = MaterialAlertDialogBuilder(view?.context)
         mBuilder.setMessage(getString(R.string.broker_remove_confirm, broker.label))
         mBuilder.setPositiveButton(R.string.yes) { dialog, which ->
             viewModel.removeBroker(broker)
