@@ -7,16 +7,20 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.launch
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 import java.lang.Exception
+
+enum class ConnectionStatus {
+    NOT_CONNECTED,
+    CONNECTED,
+    FAILED_TO_CONNECT,
+    CONNECTION_LOST
+}
 
 data class Broker(
     val label: String,
@@ -27,6 +31,7 @@ data class Broker(
     val id: String? = null
 ) {
     private lateinit var mqttClient: MqttAndroidClient
+    var connectionStatus: ConnectionStatus = ConnectionStatus.NOT_CONNECTED
 
     companion object {
         private val db = Firebase.firestore
@@ -137,18 +142,18 @@ data class Broker(
         mqttClient?.unregisterResources()
     }
 
-    fun connect(mqttClient: MqttAndroidClient): Flow<String> {
+    fun connect(mqttClient: MqttAndroidClient): Flow<ConnectionStatus> {
         this.mqttClient = mqttClient
 
         return callbackFlow {
             try {
                 mqttClient.setCallback(object : MqttCallback {
                     override fun messageArrived(topic: String?, message: MqttMessage?) {
-                        offer("MESSAGE_RECEIVED")
                     }
 
                     override fun connectionLost(cause: Throwable?) {
-                        offer("CONNECTION_LOST")
+                        connectionStatus = ConnectionStatus.CONNECTION_LOST
+                        offer(ConnectionStatus.CONNECTION_LOST)
                     }
 
                     override fun deliveryComplete(token: IMqttDeliveryToken?) {
@@ -158,11 +163,13 @@ data class Broker(
                 val options = MqttConnectOptions()
                 mqttClient.connect(options, null, object : IMqttActionListener {
                     override fun onSuccess(asyncActionToken: IMqttToken?) {
-                        offer("CONNECTED")
+                        connectionStatus = ConnectionStatus.CONNECTED
+                        offer(ConnectionStatus.CONNECTED)
                     }
 
                     override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
-                        offer(exception?.message)
+                        connectionStatus = ConnectionStatus.FAILED_TO_CONNECT
+                        offer(ConnectionStatus.FAILED_TO_CONNECT)
                     }
                 })
             } catch (e: MqttException) {
