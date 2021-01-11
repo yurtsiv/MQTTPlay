@@ -14,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.navArgs
 import com.example.mqttplay.R
 import com.example.mqttplay.databinding.FragmentViewBrokerBinding
@@ -45,9 +46,9 @@ class ViewBrokerFragment : Fragment() {
         val brokerId = args.brokerId
         viewModel.initialize(view.context as Context, brokerId)
 
-        viewModel.toast.observe(viewLifecycleOwner, { message ->
+        viewModel.toast.observe(viewLifecycleOwner) { message ->
             Toast.makeText(view.context, message, Toast.LENGTH_SHORT).show()
-        })
+        }
 
         trackStatusBarStateChange()
     }
@@ -55,15 +56,15 @@ class ViewBrokerFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
 
-        viewModel.broker.clearMqttResources()
+        viewModel.mqttConnection.clearResources()
     }
 
     private fun trackStatusBarStateChange() {
         viewModel.statusBarState.observe(viewLifecycleOwner) {
             val v = view as View;
-            val statusBar = v.findViewById<ConstraintLayout>(R.id.view_broker_status_bar)
-            val statusBarTxt = v.findViewById<TextView>(R.id.view_broker_status_bar_text)
-            val loader = v.findViewById<ProgressBar>(R.id.view_broker_status_bar_loader)
+            val statusBar = v.findViewById<ConstraintLayout>(R.id.viewBrokerStatusBar)
+            val statusBarTxt = v.findViewById<TextView>(R.id.viewBrokerStatusBarText)
+            val loader = v.findViewById<ProgressBar>(R.id.viewBrokerStatusBarLoader)
 
             when (it) {
                 StatusBarState.INVISIBLE -> {

@@ -8,9 +8,10 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.observe
 import com.example.mqttplay.R
 import com.example.mqttplay.databinding.FragmentBrokerFormBinding
-import com.example.mqttplay.model.Broker
+import com.example.mqttplay.repo.Broker
 import com.example.mqttplay.viewmodel.BrokerFormViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

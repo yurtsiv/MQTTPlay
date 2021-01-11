@@ -1,6 +1,5 @@
 package com.example.mqttplay.view
 
-import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,12 +9,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mqttplay.R
 import com.example.mqttplay.adapter.BrokerItemAdapter
 import com.example.mqttplay.databinding.FragmentBrokersListBinding
-import com.example.mqttplay.model.Broker
+import com.example.mqttplay.repo.Broker
 import com.example.mqttplay.viewmodel.BrokersListViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -67,10 +67,10 @@ class BrokersListFragment : Fragment() {
     private fun confirmBrokerRemove(broker: Broker) {
         val mBuilder = MaterialAlertDialogBuilder(view?.context)
         mBuilder.setMessage(getString(R.string.broker_remove_confirm, broker.label))
-        mBuilder.setPositiveButton(R.string.yes) { dialog, which ->
+        mBuilder.setPositiveButton(R.string.yes) { _, _ ->
             viewModel.removeBroker(broker)
         }
-        mBuilder.setNegativeButton(R.string.cancel) { dialog, which -> }
+        mBuilder.setNegativeButton(R.string.cancel) { _, _ -> }
         mBuilder.show()
     }
 
@@ -92,14 +92,14 @@ class BrokersListFragment : Fragment() {
     private fun setupBrokersList() {
         if (context == null) return;
 
-        viewModel.brokers.observe(viewLifecycleOwner, { brokers ->
+        viewModel.brokers.observe(viewLifecycleOwner) { brokers ->
             val recyclerView = view?.findViewById<RecyclerView>(R.id.brokersRecyclerView)
             val adapter = BrokerItemAdapter(context as Context, brokers) {
                 onItemClick(it)
             }
             recyclerView?.adapter = adapter
             recyclerView?.setHasFixedSize(true)
-        })
+        }
 
         viewModel.loadBrokers()
     }

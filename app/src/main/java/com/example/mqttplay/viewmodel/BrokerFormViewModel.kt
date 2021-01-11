@@ -1,15 +1,14 @@
 package com.example.mqttplay.viewmodel
 
 import android.util.Patterns
-import android.widget.Toast
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mqttplay.R
-import com.example.mqttplay.model.Broker
+import com.example.mqttplay.repo.Broker
+import com.example.mqttplay.repo.BrokerRepo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
@@ -73,7 +72,7 @@ class BrokerFormViewModel : ViewModel() {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val broker = Broker.fetchSingle(brokerId)
+                val broker = BrokerRepo.fetchSingle(brokerId)
 
                 label.postValue(broker.label)
                 address.postValue(broker.address)

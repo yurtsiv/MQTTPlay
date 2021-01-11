@@ -1,15 +1,11 @@
 package com.example.mqttplay.adapter
 
 import android.content.Context
-import android.content.Intent
 import android.view.*
-import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mqttplay.R
-import com.example.mqttplay.view.ViewBrokerFragment
-import com.example.mqttplay.model.Broker
+import com.example.mqttplay.repo.Broker
 
 class BrokerItemAdapter(
     private val context: Context,

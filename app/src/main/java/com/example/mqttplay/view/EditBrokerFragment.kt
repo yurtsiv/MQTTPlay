@@ -9,7 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.mqttplay.R
-import com.example.mqttplay.model.Broker
+import com.example.mqttplay.repo.Broker
+import com.example.mqttplay.repo.BrokerRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.lang.Exception
@@ -37,7 +38,7 @@ class EditBrokerFragment : Fragment(), BrokerFormFragment.OnBrokerFormSaveListen
 
     override suspend fun onBrokerFormSave(broker: Broker) {
         try {
-            broker.save()
+            BrokerRepo.save(broker)
             withContext(Dispatchers.Main) {
                 showToast(getString(R.string.broker_save_success))
                 goToBrokersList()

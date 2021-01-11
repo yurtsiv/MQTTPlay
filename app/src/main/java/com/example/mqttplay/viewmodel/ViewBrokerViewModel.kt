@@ -3,13 +3,14 @@ package com.example.mqttplay.viewmodel
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.mqttplay.model.Broker
-import com.example.mqttplay.model.ConnectionStatus
+import com.example.mqttplay.mqtt.ConnectionStatus
+import com.example.mqttplay.mqtt.MQTTConnection
+import com.example.mqttplay.repo.Broker
+import com.example.mqttplay.repo.BrokerRepo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import org.eclipse.paho.android.service.MqttAndroidClient
 
 enum class StatusBarState {
     INVISIBLE,
@@ -20,6 +21,7 @@ enum class StatusBarState {
 
 class ViewBrokerViewModel : ViewModel() {
     lateinit var broker: Broker;
+    lateinit var mqttConnection: MQTTConnection;
 
     val toast = MutableLiveData<String>()
 
@@ -29,14 +31,10 @@ class ViewBrokerViewModel : ViewModel() {
         CoroutineScope(Dispatchers.IO).launch {
             statusBarState.postValue(StatusBarState.CONNECTING)
 
-            broker = Broker.fetchSingle(brokerId)
-
-            val serverURI = "tcp://${broker.address}:${broker.port}";
-
-            val mqttClient = MqttAndroidClient(context, serverURI, "kotlin_client")
-
-            broker
-                .connect(mqttClient)
+            broker = BrokerRepo.fetchSingle(brokerId)
+            mqttConnection = MQTTConnection(broker, context)
+            mqttConnection
+                .connect()
                 .collect {
                     when(it) {
                         ConnectionStatus.CONNECTED ->
@@ -50,12 +48,12 @@ class ViewBrokerViewModel : ViewModel() {
     }
 
     fun sendTestMessage() {
-        if (broker.connectionStatus != ConnectionStatus.CONNECTED) return
+        if (mqttConnection.connectionStatus != ConnectionStatus.CONNECTED) return
 
         CoroutineScope(Dispatchers.IO).launch {
             val topic = "home/ding_dong"
             val msg = "hello"
-            broker.publishMessage(topic, msg)
+            mqttConnection.publishMessage(topic, msg)
         }
     }
 }
