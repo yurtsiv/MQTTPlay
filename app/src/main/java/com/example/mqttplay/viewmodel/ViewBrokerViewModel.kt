@@ -3,10 +3,14 @@ package com.example.mqttplay.viewmodel
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavDirections
+import com.example.mqttplay.R
+import com.example.mqttplay.adapter.ArrayAdapterWithIcon
 import com.example.mqttplay.mqtt.ConnectionStatus
 import com.example.mqttplay.mqtt.MQTTConnection
 import com.example.mqttplay.repo.Broker
 import com.example.mqttplay.repo.BrokerRepo
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -18,6 +22,7 @@ enum class StatusBarState {
     CONNECTED,
     CONNECTION_ERROR
 }
+
 
 class ViewBrokerViewModel : ViewModel() {
     lateinit var broker: Broker;

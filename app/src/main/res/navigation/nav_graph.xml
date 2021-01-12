@@ -34,6 +34,9 @@
         <argument
             android:name="brokerLabel"
             app:argType="string" />
+        <action
+            android:id="@+id/action_viewBrokerFragment_to_recurringTileFormFragment"
+            app:destination="@id/recurringTileFormFragment" />
     </fragment>
     <fragment
         android:id="@+id/editBrokerFragment2"
@@ -55,5 +58,14 @@
         <action
             android:id="@+id/action_addBrokerFragment2_to_brokersListFragment"
             app:destination="@id/brokersListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/recurringTileFormFragment"
+        android:name="com.example.mqttplay.view.RecurringTileFormFragment"
+        android:label="fragment_recurring_tile_form"
+        tools:layout="@layout/fragment_recurring_tile_form" >
+        <action
+            android:id="@+id/action_recurringTileFormFragment_to_viewBrokerFragment"
+            app:destination="@id/viewBrokerFragment" />
     </fragment>
 </navigation>

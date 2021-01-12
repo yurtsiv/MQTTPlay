@@ -15,16 +15,27 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.observe
+import androidx.navigation.NavDirections
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.mqttplay.R
+import com.example.mqttplay.adapter.ArrayAdapterWithIcon
 import com.example.mqttplay.databinding.FragmentViewBrokerBinding
 import com.example.mqttplay.viewmodel.StatusBarState
 import com.example.mqttplay.viewmodel.ViewBrokerViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+
+data class AddTileDialogItem(val title: String, val icon: Int, val navDirection: NavDirections)
 
 class ViewBrokerFragment : Fragment() {
     private val args: ViewBrokerFragmentArgs by navArgs()
     lateinit var binding: FragmentViewBrokerBinding
     private val viewModel = ViewBrokerViewModel()
+    val addTileDialogItems = listOf(
+        AddTileDialogItem("Recurring", R.drawable.time, ViewBrokerFragmentDirections.actionViewBrokerFragmentToRecurringTileFormFragment()),
+        AddTileDialogItem("Button", R.drawable.button, ViewBrokerFragmentDirections.actionViewBrokerFragmentToBrokersListFragment())
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,12 +62,18 @@ class ViewBrokerFragment : Fragment() {
         }
 
         trackStatusBarStateChange()
+        setupAddTileBtn()
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
         viewModel.mqttConnection.clearResources()
+    }
+
+    private fun setupAddTileBtn() {
+        val btn = view?.findViewById<FloatingActionButton>(R.id.add_tile_btn)
+        btn?.setOnClickListener { onAddTileClick() }
     }
 
     private fun trackStatusBarStateChange() {
@@ -99,5 +116,17 @@ class ViewBrokerFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun onAddTileClick() {
+        val builder = MaterialAlertDialogBuilder(context)
+        val adapter = ArrayAdapterWithIcon(context as Context, addTileDialogItems.map { it.title }, addTileDialogItems.map { it.icon })
+
+        builder.setAdapter(adapter) { _, item ->
+            findNavController().navigate(
+                addTileDialogItems[item].navDirection
+            )
+        }
+        builder.create().show()
     }
 }
