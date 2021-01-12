@@ -20,7 +20,7 @@ private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
 class AddRecurringTileFragment : Fragment(), RecurringTileFormFragment.OnRecurringTileFormSaveListener {
-    private val args: EditBrokerFragmentArgs by navArgs()
+    private val args: AddRecurringTileFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +58,7 @@ class AddRecurringTileFragment : Fragment(), RecurringTileFormFragment.OnRecurri
     private fun goToBrokerView() {
         val action = AddRecurringTileFragmentDirections.actionAddRecurringTileFragmentToViewBrokerFragment(
             args.brokerId,
-            ""
+            args.brokerLabel
         )
         findNavController().navigate(action)
     }

@@ -59,7 +59,7 @@ class ViewBrokerFragment : Fragment() {
         }
 
         addTileDialogItems = listOf(
-            AddTileDialogItem("Recurring", R.drawable.time, ViewBrokerFragmentDirections.actionViewBrokerFragmentToAddRecurringTileFragment(args.brokerId, null)),
+            AddTileDialogItem("Recurring", R.drawable.time, ViewBrokerFragmentDirections.actionViewBrokerFragmentToAddRecurringTileFragment(args.brokerId, null, args.brokerLabel)),
             AddTileDialogItem("Button", R.drawable.button, ViewBrokerFragmentDirections.actionViewBrokerFragmentToBrokersListFragment())
         )
 

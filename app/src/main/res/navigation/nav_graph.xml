@@ -63,13 +63,12 @@
     <fragment
         android:id="@+id/addRecurringTileFragment"
         android:name="com.example.mqttplay.view.AddRecurringTileFragment"
-        android:label="fragment_add_recurring_tile"
-        tools:layout="@layout/fragment_add_recurring_tile" >
+        android:label="Recurring tile"
+        tools:layout="@layout/fragment_add_recurring_tile">
         <action
             android:id="@+id/action_addRecurringTileFragment_to_viewBrokerFragment"
             app:destination="@id/viewBrokerFragment"
-            app:popUpTo="@id/brokersListFragment"
-            />
+            app:popUpTo="@id/brokersListFragment" />
         <argument
             android:name="brokerId"
             app:argType="string" />
@@ -77,5 +76,8 @@
             android:name="tileId"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="brokerLabel"
+            app:argType="string" />
     </fragment>
 </navigation>
