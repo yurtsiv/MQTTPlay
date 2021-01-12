@@ -1,6 +1,7 @@
 package com.example.mqttplay.repo
 
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.WriteBatch
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlin.coroutines.resume
@@ -68,6 +69,7 @@ class TileRepo {
         suspend fun listAllForBroker(brokerId: String): List<Tile> {
             return suspendCoroutine { cont ->
                 db.collection(COLLECTION)
+                    .whereEqualTo("brokerId", brokerId)
                     .get()
                     .addOnSuccessListener { documents ->
                         val res = documents.map { docToTile(it) }
@@ -123,6 +125,27 @@ class TileRepo {
                 create(tile);
             } else {
                 edit(tile.id, tile);
+            }
+        }
+
+        suspend fun removeAllForBroker(brokerId: String): Unit {
+            return suspendCoroutine { cont ->
+                val batch = db.batch()
+                db.collection(COLLECTION)
+                    .whereEqualTo("brokerId", brokerId)
+                    .get()
+                    .addOnSuccessListener { snapshot ->
+                           snapshot.documents.forEach {
+                               batch.delete(it.reference)
+                           }
+
+                            batch.commit().addOnSuccessListener {
+                                cont.resume(Unit)
+                            }
+                    }
+                    .addOnFailureListener { e ->
+                        cont.resumeWithException(e)
+                    }
             }
         }
 

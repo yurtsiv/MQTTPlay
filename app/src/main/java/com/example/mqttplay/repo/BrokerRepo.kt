@@ -94,7 +94,8 @@ class BrokerRepo {
         }
 
         suspend fun remove(id: String) {
-            // TODO: remove tiles also
+            TileRepo.removeAllForBroker(id)
+
             return suspendCoroutine { cont ->
                 db.document("${COLLECTION}/${id}")
                     .delete()
