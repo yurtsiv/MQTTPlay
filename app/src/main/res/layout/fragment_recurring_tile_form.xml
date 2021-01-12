@@ -98,6 +98,20 @@
             android:layout_height="1dp"
             android:background="?attr/colorButtonNormal" />
 
+        <TextView
+            android:id="@+id/set_time_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{liveData.timeStr}"
+            android:textAlignment="center"
+            android:textSize="35dp"
+        />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/colorButtonNormal" />
+
         <Button
             android:id="@+id/save_tile_btn"
             android:layout_width="wrap_content"

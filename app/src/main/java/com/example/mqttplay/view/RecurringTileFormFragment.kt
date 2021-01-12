@@ -6,11 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentManager
 import com.example.mqttplay.R
 import com.example.mqttplay.databinding.FragmentRecurringTileFormBinding
 import com.example.mqttplay.repo.Tile
 import com.example.mqttplay.viewmodel.RecurringTileFormViewModel
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -41,6 +45,7 @@ class RecurringTileFormFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupSaveBtn()
+        setupSetTimeBtn()
     }
 
     fun initForm(brokerId: String, tileId: String?) {
@@ -57,6 +62,26 @@ class RecurringTileFormFragment : Fragment() {
                 } finally {
                     viewModel.saving.postValue(false)
                 }
+            }
+        }
+    }
+
+    private fun setupSetTimeBtn() {
+        val btn = view?.findViewById<TextView>(R.id.set_time_button)
+
+        btn?.setOnClickListener {
+            val picker = MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(viewModel.hour.value as Int)
+                .setMinute(viewModel.minute.value as Int)
+                .setTitleText("When to send the message")
+                .build()
+
+            picker.show(childFragmentManager, "tag")
+
+            picker.addOnPositiveButtonClickListener {
+                viewModel.hour.postValue(picker.hour)
+                viewModel.minute.postValue(picker.minute)
             }
         }
     }

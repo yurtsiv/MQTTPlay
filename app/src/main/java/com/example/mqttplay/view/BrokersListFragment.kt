@@ -65,7 +65,7 @@ class BrokersListFragment : Fragment() {
     }
 
     private fun confirmBrokerRemove(broker: Broker) {
-        val mBuilder = MaterialAlertDialogBuilder(view?.context)
+        val mBuilder = MaterialAlertDialogBuilder(view?.context as Context)
         mBuilder.setMessage(getString(R.string.broker_remove_confirm, broker.label))
         mBuilder.setPositiveButton(R.string.yes) { _, _ ->
             viewModel.removeBroker(broker)

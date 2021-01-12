@@ -12,6 +12,11 @@ enum class TileType {
     BUTTON
 }
 
+data class RecurringTileTime(
+    val hour: Int,
+    val minute: Int
+)
+
 data class Tile(
     val id: String? = null,
     val brokerId: String,
@@ -19,7 +24,8 @@ data class Tile(
     val value: String?,
     val qos: Int,
     val retainMessage: Boolean?,
-    val type: TileType
+    val type: TileType,
+    val recurringTime: RecurringTileTime?
 )
 
 class TileRepo {
@@ -28,6 +34,7 @@ class TileRepo {
         const val COLLECTION = "tiles"
 
         private fun docToTile(document: DocumentSnapshot): Tile {
+            val recurringTime = document.data?.get("recurringTime");
             return Tile(
                 document.id,
                 document.data?.get("brokerId") as String,
@@ -35,18 +42,28 @@ class TileRepo {
                 document.data?.get("value") as String,
                 (document.data?.get("qos") as Long).toInt(),
                 document.data?.get("retainMessage") as Boolean,
-                document.data?.get("type") as TileType
+                document.data?.get("type") as TileType,
+                null
             )
         }
 
         private fun tileToHashMap(tile: Tile): HashMap<String, Any?> {
+            var recurringTime: HashMap<String, Int>? = null
+            if (tile.recurringTime != null) {
+                recurringTime = hashMapOf(
+                    "hour" to tile.recurringTime?.hour,
+                    "minute" to tile.recurringTime?.minute
+                )
+            }
+
             return hashMapOf(
                 "brokerId" to tile.brokerId,
                 "topic" to tile.topic,
                 "value" to tile.value,
                 "qos" to tile.qos,
                 "retainMessage" to tile.retainMessage,
-                "type" to tile.type
+                "type" to tile.type,
+                "recurringTime" to recurringTime
             )
         }
 

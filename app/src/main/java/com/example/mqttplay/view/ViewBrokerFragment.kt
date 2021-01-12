@@ -121,7 +121,7 @@ class ViewBrokerFragment : Fragment() {
     }
 
     private fun onAddTileClick() {
-        val builder = MaterialAlertDialogBuilder(context)
+        val builder = MaterialAlertDialogBuilder(context as Context)
         val adapter = ArrayAdapterWithIcon(context as Context, addTileDialogItems.map { it.title }, addTileDialogItems.map { it.icon })
 
         builder.setAdapter(adapter) { _, item ->

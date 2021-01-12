@@ -4,6 +4,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mqttplay.R
+import com.example.mqttplay.repo.RecurringTileTime
 import com.example.mqttplay.repo.Tile
 import com.example.mqttplay.repo.TileType
 
@@ -27,7 +28,18 @@ class RecurringTileFormViewModel : ViewModel() {
     val value = MutableLiveData<String>()
     val qualityOfServiceID = MutableLiveData<Int>().apply { value = R.id.QOS_0 }
     val retainMessage = MutableLiveData<Boolean>().apply { value = false }
+    val hour = MutableLiveData<Int>().apply { value = 0 }
+    val minute = MutableLiveData<Int>().apply { value = 0 }
 
+    val timeStr = MediatorLiveData<String>().apply {
+        addSource(hour) {
+           value = formatTime()
+        }
+
+        addSource(minute) {
+            value = formatTime()
+        }
+    }
     val saving = MutableLiveData<Boolean>().apply { value = false }
 
     private val valid = MediatorLiveData<Boolean>().apply {
@@ -46,6 +58,12 @@ class RecurringTileFormViewModel : ViewModel() {
         addSource(valid) {
             value = isSaveBtnEnabled()
         }
+    }
+
+    private fun formatTime(): String {
+        val hourStr = hour.value.toString().padStart(2, '0')
+        val minuteStr = minute.value.toString().padStart(2, '0')
+        return "$hourStr:$minuteStr"
     }
 
     private fun isSaveBtnEnabled(): Boolean {
@@ -69,7 +87,11 @@ class RecurringTileFormViewModel : ViewModel() {
             value.value,
             QOS_ID_TO_VALUE[qualityOfServiceID.value] as Int,
             retainMessage.value,
-            TileType.RECURRING
+            TileType.RECURRING,
+            RecurringTileTime(
+                hour.value as Int,
+                minute.value as Int
+            )
         );
     }
 
