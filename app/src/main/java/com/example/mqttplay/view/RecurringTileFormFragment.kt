@@ -8,11 +8,12 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
 import com.example.mqttplay.R
 import com.example.mqttplay.databinding.FragmentRecurringTileFormBinding
 import com.example.mqttplay.repo.Tile
 import com.example.mqttplay.viewmodel.RecurringTileFormViewModel
+import com.example.mqttplay.viewmodel.TileFormCommonFieldsViewModel
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import kotlinx.coroutines.CoroutineScope
@@ -26,7 +27,8 @@ class RecurringTileFormFragment : Fragment() {
 
     lateinit var onSave: OnRecurringTileFormSaveListener
     lateinit var binding: FragmentRecurringTileFormBinding
-    private val viewModel = RecurringTileFormViewModel()
+    private val viewModel: RecurringTileFormViewModel by viewModels()
+    private val commonFieldsViewModel: TileFormCommonFieldsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,11 +40,19 @@ class RecurringTileFormFragment : Fragment() {
         binding.liveData = viewModel
         binding.lifecycleOwner = this
 
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.saving.observe(viewLifecycleOwner) {
+            viewModel.saveBtnEnabled.value = isSaveBtnEnabled()
+        }
+        commonFieldsViewModel.valid.observe(viewLifecycleOwner) {
+            viewModel.saveBtnEnabled.value = isSaveBtnEnabled()
+        }
 
         setupSaveBtn()
         setupSetTimeBtn()
@@ -52,13 +62,17 @@ class RecurringTileFormFragment : Fragment() {
         viewModel.initForm(brokerId, tileId)
     }
 
+    private fun isSaveBtnEnabled(): Boolean {
+        return !(viewModel.saving.value ?: false) && (commonFieldsViewModel.valid.value ?: false)
+    }
+
     private fun setupSaveBtn() {
         val saveBtn = view?.findViewById<Button>(R.id.save_tile_btn)
         saveBtn?.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     viewModel.saving.postValue(true)
-                    onSave.onRecurringTileFormSave(viewModel.constructTile())
+                    onSave.onRecurringTileFormSave(viewModel.formDataToTile(commonFieldsViewModel))
                 } finally {
                     viewModel.saving.postValue(false)
                 }

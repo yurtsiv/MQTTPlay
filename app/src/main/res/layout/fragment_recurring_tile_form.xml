@@ -22,81 +22,11 @@
         tools:layout_editor_absoluteX="76dp"
         tools:layout_editor_absoluteY="0dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/topicTextField"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        <fragment
+            android:id="@+id/tile_form_common_fields_fragment"
+            android:name="com.example.mqttplay.view.TileFormCommonFieldsFragment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Topic">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@={liveData.topic}"
-                />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/valueTextField"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Value">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@={liveData.value}"
-                />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:checkedButton="@={liveData.qualityOfServiceID}"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@id/QOS_0"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:tag="QOS_0"
-                android:text="QoS 0" />
-
-            <RadioButton
-                android:id="@id/QOS_1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:tag="QOS_1"
-                android:text="QoS 1" />
-
-            <RadioButton
-                android:id="@id/QOS_2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:tag="QOS_3"
-                android:text="QoS 2" />
-        </RadioGroup>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?attr/colorButtonNormal" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:checked="@={liveData.retainMessage}"
-            android:paddingLeft="5dp"
-            android:text="Retain message" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?attr/colorButtonNormal" />
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/set_time_button"
@@ -104,8 +34,7 @@
             android:layout_height="wrap_content"
             android:text="@{liveData.timeStr}"
             android:textAlignment="center"
-            android:textSize="35dp"
-        />
+            android:textSize="35dp" />
 
         <View
             android:layout_width="match_parent"

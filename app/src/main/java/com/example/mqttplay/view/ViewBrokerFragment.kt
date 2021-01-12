@@ -63,8 +63,20 @@ class ViewBrokerFragment : Fragment() {
         }
 
         addTileDialogItems = listOf(
-            AddTileDialogItem("Recurring", R.drawable.time, ViewBrokerFragmentDirections.actionViewBrokerFragmentToAddRecurringTileFragment(args.brokerId, null, args.brokerLabel)),
-            AddTileDialogItem("Button", R.drawable.button, ViewBrokerFragmentDirections.actionViewBrokerFragmentToBrokersListFragment())
+            AddTileDialogItem(
+                "Recurring",
+                R.drawable.time,
+                ViewBrokerFragmentDirections.actionViewBrokerFragmentToAddRecurringTileFragment(
+                    args.brokerId,
+                    null,
+                    args.brokerLabel
+                )
+            ),
+            AddTileDialogItem(
+                "Button",
+                R.drawable.button,
+                ViewBrokerFragmentDirections.actionViewBrokerFragmentToBrokersListFragment()
+            )
         )
 
         trackStatusBarStateChange()
@@ -86,8 +98,8 @@ class ViewBrokerFragment : Fragment() {
 
             recyclerView?.layoutManager = GridLayoutManager(context, 2);
 
-            val adapter = TileItemAdapter(context as Context, tiles) {
-                _ -> {}
+            val adapter = TileItemAdapter(context as Context, tiles) { _ ->
+                {}
             }
 
             recyclerView?.adapter = adapter
@@ -131,7 +143,10 @@ class ViewBrokerFragment : Fragment() {
                     }, 2000)
                 }
                 StatusBarState.CONNECTION_ERROR -> {
-                    val color = ContextCompat.getColor(context as Context, R.color.design_default_color_error)
+                    val color = ContextCompat.getColor(
+                        context as Context,
+                        R.color.design_default_color_error
+                    )
 
                     statusBar.setBackgroundColor(color)
                     statusBar.visibility = View.VISIBLE
@@ -144,7 +159,10 @@ class ViewBrokerFragment : Fragment() {
 
     private fun onAddTileClick() {
         val builder = MaterialAlertDialogBuilder(context as Context)
-        val adapter = ArrayAdapterWithIcon(context as Context, addTileDialogItems.map { it.title }, addTileDialogItems.map { it.icon })
+        val adapter = ArrayAdapterWithIcon(
+            context as Context,
+            addTileDialogItems.map { it.title },
+            addTileDialogItems.map { it.icon })
 
         builder.setAdapter(adapter) { _, item ->
             findNavController().navigate(

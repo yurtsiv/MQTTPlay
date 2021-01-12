@@ -9,22 +9,14 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.mqttplay.R
-import com.example.mqttplay.repo.BrokerRepo
 import com.example.mqttplay.repo.Tile
 import com.example.mqttplay.repo.TileRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.lang.Exception
 
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 class AddRecurringTileFragment : Fragment(), RecurringTileFormFragment.OnRecurringTileFormSaveListener {
     private val args: AddRecurringTileFragmentArgs by navArgs()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
