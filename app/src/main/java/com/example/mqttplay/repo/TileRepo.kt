@@ -1,4 +1,4 @@
-package com.example.mqttplay.repo;
+package com.example.mqttplay.repo
 
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
@@ -7,47 +7,55 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-data class Broker(
-    val label: String,
-    val address: String,
-    val port: String,
+enum class TileType {
+    RECURRING,
+    BUTTON
+}
+
+data class Tile(
+    val id: String? = null,
+    val brokerId: String,
+    val topic: String,
+    val value: String?,
     val qos: Int,
-    val useSSL: Boolean,
-    val id: String? = null
+    val retainMessage: Boolean?,
+    val type: TileType
 )
 
-class BrokerRepo {
+class TileRepo {
     companion object {
         private val db = Firebase.firestore
-        const val COLLECTION = "brokers"
+        const val COLLECTION = "tiles"
 
-        private fun docToBroker(document: DocumentSnapshot): Broker {
-            return Broker(
-                document.data?.get("label") as String,
-                document.data?.get("address") as String,
-                document.data?.get("port") as String,
+        private fun docToTile(document: DocumentSnapshot): Tile {
+            return Tile(
+                document.id,
+                document.data?.get("brokerId") as String,
+                document.data?.get("topic") as String,
+                document.data?.get("value") as String,
                 (document.data?.get("qos") as Long).toInt(),
-                document.data?.get("useSSL") as Boolean,
-                document.id
+                document.data?.get("retainMessage") as Boolean,
+                document.data?.get("type") as TileType
             )
         }
 
-        private fun brokerToHashMap(broker: Broker): HashMap<String, Any> {
+        private fun tileToHashMap(tile: Tile): HashMap<String, Any?> {
             return hashMapOf(
-                "label" to broker.label,
-                "address" to broker.address,
-                "port" to broker.port,
-                "qos" to broker.qos,
-                "useSSL" to broker.useSSL
+                "brokerId" to tile.brokerId,
+                "topic" to tile.topic,
+                "value" to tile.value,
+                "qos" to tile.qos,
+                "retainMessage" to tile.retainMessage,
+                "type" to tile.type
             )
         }
 
-        suspend fun listAll(): List<Broker> {
+        suspend fun listAllForBroker(brokerId: String): List<Tile> {
             return suspendCoroutine { cont ->
                 db.collection(COLLECTION)
                     .get()
                     .addOnSuccessListener { documents ->
-                        val res = documents.map { docToBroker(it) }
+                        val res = documents.map { docToTile(it) }
                         cont.resume(res)
                     }
                     .addOnFailureListener {
@@ -56,12 +64,12 @@ class BrokerRepo {
             }
         }
 
-        suspend fun fetchSingle(id: String): Broker {
+        suspend fun fetchSingle(id: String): Tile {
             return suspendCoroutine { cont ->
                 db.document("${COLLECTION}/${id}")
                     .get()
                     .addOnSuccessListener { doc ->
-                        cont.resume(docToBroker(doc))
+                        cont.resume(docToTile(doc))
                     }
                     .addOnFailureListener {
                         cont.resumeWithException(it)
@@ -69,10 +77,10 @@ class BrokerRepo {
             }
         }
 
-        private suspend fun create(broker: Broker): String {
+        private suspend fun create(tile: Tile): String {
             return suspendCoroutine { cont ->
                 db.collection(COLLECTION)
-                    .add(brokerToHashMap(broker))
+                    .add(tileToHashMap(tile))
                     .addOnSuccessListener { documentReference ->
                         cont.resume(documentReference.id)
                     }
@@ -82,10 +90,10 @@ class BrokerRepo {
             }
         }
 
-        private suspend fun edit(id: String, broker: Broker): String {
+        private suspend fun edit(id: String, tile: Tile): String {
             return suspendCoroutine { cont ->
                 db.document("${COLLECTION}/${id}")
-                    .set(brokerToHashMap(broker))
+                    .set(tileToHashMap(tile))
                     .addOnSuccessListener {
                         cont.resume(id ?: "")
                     }
@@ -95,15 +103,16 @@ class BrokerRepo {
             }
         }
 
-        suspend fun save(broker: Broker): String {
-            return if (broker.id == null) {
-                create(broker);
+        suspend fun save(tile: Tile): String {
+            return if (tile.id == null) {
+                create(tile);
             } else {
-                edit(broker.id, broker);
+                edit(tile.id, tile);
             }
         }
 
         suspend fun remove(id: String) {
+            // TODO: remove tiles also
             return suspendCoroutine { cont ->
                 db.document("${COLLECTION}/${id}")
                     .delete()

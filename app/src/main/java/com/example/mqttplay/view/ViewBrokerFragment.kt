@@ -32,10 +32,7 @@ class ViewBrokerFragment : Fragment() {
     private val args: ViewBrokerFragmentArgs by navArgs()
     lateinit var binding: FragmentViewBrokerBinding
     private val viewModel = ViewBrokerViewModel()
-    val addTileDialogItems = listOf(
-        AddTileDialogItem("Recurring", R.drawable.time, ViewBrokerFragmentDirections.actionViewBrokerFragmentToRecurringTileFormFragment()),
-        AddTileDialogItem("Button", R.drawable.button, ViewBrokerFragmentDirections.actionViewBrokerFragmentToBrokersListFragment())
-    )
+    private lateinit var addTileDialogItems: List<AddTileDialogItem>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,6 +57,11 @@ class ViewBrokerFragment : Fragment() {
         viewModel.toast.observe(viewLifecycleOwner) { message ->
             Toast.makeText(view.context, message, Toast.LENGTH_SHORT).show()
         }
+
+        addTileDialogItems = listOf(
+            AddTileDialogItem("Recurring", R.drawable.time, ViewBrokerFragmentDirections.actionViewBrokerFragmentToAddRecurringTileFragment(args.brokerId, null)),
+            AddTileDialogItem("Button", R.drawable.button, ViewBrokerFragmentDirections.actionViewBrokerFragmentToBrokersListFragment())
+        )
 
         trackStatusBarStateChange()
         setupAddTileBtn()

@@ -35,8 +35,9 @@
             android:name="brokerLabel"
             app:argType="string" />
         <action
-            android:id="@+id/action_viewBrokerFragment_to_recurringTileFormFragment"
-            app:destination="@id/recurringTileFormFragment" />
+            android:id="@+id/action_viewBrokerFragment_to_addRecurringTileFragment"
+            app:destination="@id/addRecurringTileFragment"
+            />
     </fragment>
     <fragment
         android:id="@+id/editBrokerFragment2"
@@ -60,12 +61,21 @@
             app:destination="@id/brokersListFragment" />
     </fragment>
     <fragment
-        android:id="@+id/recurringTileFormFragment"
-        android:name="com.example.mqttplay.view.RecurringTileFormFragment"
-        android:label="fragment_recurring_tile_form"
-        tools:layout="@layout/fragment_recurring_tile_form" >
+        android:id="@+id/addRecurringTileFragment"
+        android:name="com.example.mqttplay.view.AddRecurringTileFragment"
+        android:label="fragment_add_recurring_tile"
+        tools:layout="@layout/fragment_add_recurring_tile" >
         <action
-            android:id="@+id/action_recurringTileFormFragment_to_viewBrokerFragment"
-            app:destination="@id/viewBrokerFragment" />
+            android:id="@+id/action_addRecurringTileFragment_to_viewBrokerFragment"
+            app:destination="@id/viewBrokerFragment"
+            app:popUpTo="@id/brokersListFragment"
+            />
+        <argument
+            android:name="brokerId"
+            app:argType="string" />
+        <argument
+            android:name="tileId"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 </navigation>

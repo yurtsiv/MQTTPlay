@@ -10,7 +10,10 @@
     <string name="broker_remove_confirm">Do you really want to delete %1$s?</string>
     <string name="broker_save_success">Broker saved</string>
     <string name="broker_add_success">Broker added</string>
+    <string name="tile_add_success">Tile added</string>
+
     <string name="brokers_list_activity_title">Brokers</string>
     <string name="edit_broker_activity_title">Edit broker</string>
     <string name="add_broker_activity_title">Add broker</string>
+    <string name="add_tile_activity_title">Add tile</string>
 </resources>

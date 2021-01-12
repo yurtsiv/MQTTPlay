@@ -1,7 +1,9 @@
 package com.example.mqttplay.view
 
 import android.content.Context
+import android.os.Build
 import android.util.AttributeSet
+import androidx.annotation.RequiresApi
 import com.google.android.material.textfield.TextInputEditText
 
 class TextInputWithPlaceholder : TextInputEditText {
@@ -12,8 +14,6 @@ class TextInputWithPlaceholder : TextInputEditText {
     private val placeholder = hint
 
     init {
-        revealOnFocusHint = true
-
         hint = ""
         onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
