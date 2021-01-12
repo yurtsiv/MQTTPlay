@@ -10,11 +10,14 @@ import com.example.mqttplay.mqtt.ConnectionStatus
 import com.example.mqttplay.mqtt.MQTTConnection
 import com.example.mqttplay.repo.Broker
 import com.example.mqttplay.repo.BrokerRepo
+import com.example.mqttplay.repo.Tile
+import com.example.mqttplay.repo.TileRepo
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 enum class StatusBarState {
     INVISIBLE,
@@ -28,12 +31,28 @@ class ViewBrokerViewModel : ViewModel() {
     lateinit var broker: Broker;
     lateinit var mqttConnection: MQTTConnection;
 
+    val loading = MutableLiveData<Boolean>().apply {  value = false }
+    val tiles = MutableLiveData<List<Tile>>()
     val toast = MutableLiveData<String>()
-
     val statusBarState = MutableLiveData<StatusBarState>()
+
+    private suspend fun loadTiles(brokerId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            loading.postValue(true)
+
+            try {
+                tiles.postValue(TileRepo.listAllForBroker(brokerId))
+            } catch (e: Exception) {
+                toast.postValue(e.message)
+            }
+
+            loading.postValue(false)
+        }
+    }
 
     fun initialize(context: Context, brokerId: String) {
         CoroutineScope(Dispatchers.IO).launch {
+            loadTiles(brokerId)
             statusBarState.postValue(StatusBarState.CONNECTING)
 
             broker = BrokerRepo.fetchSingle(brokerId)

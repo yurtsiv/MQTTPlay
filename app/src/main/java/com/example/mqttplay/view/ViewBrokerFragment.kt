@@ -18,8 +18,12 @@ import androidx.lifecycle.observe
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.mqttplay.R
 import com.example.mqttplay.adapter.ArrayAdapterWithIcon
+import com.example.mqttplay.adapter.BrokerItemAdapter
+import com.example.mqttplay.adapter.TileItemAdapter
 import com.example.mqttplay.databinding.FragmentViewBrokerBinding
 import com.example.mqttplay.viewmodel.StatusBarState
 import com.example.mqttplay.viewmodel.ViewBrokerViewModel
@@ -65,12 +69,30 @@ class ViewBrokerFragment : Fragment() {
 
         trackStatusBarStateChange()
         setupAddTileBtn()
+        setupBrokersList()
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
         viewModel.mqttConnection.clearResources()
+    }
+
+    private fun setupBrokersList() {
+        if (context == null) return;
+
+        viewModel.tiles.observe(viewLifecycleOwner) { tiles ->
+            val recyclerView = view?.findViewById<RecyclerView>(R.id.tiles_recycler_view)
+
+            recyclerView?.layoutManager = GridLayoutManager(context, 2);
+
+            val adapter = TileItemAdapter(context as Context, tiles) {
+                _ -> {}
+            }
+
+            recyclerView?.adapter = adapter
+            recyclerView?.setHasFixedSize(true)
+        }
     }
 
     private fun setupAddTileBtn() {

@@ -9,7 +9,8 @@ import kotlin.coroutines.suspendCoroutine
 
 enum class TileType {
     RECURRING,
-    BUTTON
+    BUTTON,
+    UNKNOWN
 }
 
 data class RecurringTileTime(
@@ -33,17 +34,34 @@ class TileRepo {
         private val db = Firebase.firestore
         const val COLLECTION = "tiles"
 
+        private fun stringToTileType(str: String?): TileType {
+           return when(str) {
+               "RECURRING" -> TileType.RECURRING
+               "BUTTON" -> TileType.BUTTON
+               else -> TileType.UNKNOWN
+           }
+        }
+
         private fun docToTile(document: DocumentSnapshot): Tile {
-            val recurringTime = document.data?.get("recurringTime");
+            var recurringTime: RecurringTileTime? = null
+
+            if (document.data?.get("recurringTime") != null) {
+                val hashMap = document.data?.get("recurringTime") as HashMap<String, Long>
+                recurringTime = RecurringTileTime(
+                    (hashMap["hour"] as Long).toInt(),
+                    (hashMap["minute"] as Long).toInt()
+                )
+            }
+
             return Tile(
                 document.id,
                 document.data?.get("brokerId") as String,
                 document.data?.get("topic") as String,
-                document.data?.get("value") as String,
+                document.data?.get("value") as String?,
                 (document.data?.get("qos") as Long).toInt(),
                 document.data?.get("retainMessage") as Boolean,
-                document.data?.get("type") as TileType,
-                null
+                stringToTileType(document.data?.get("type") as String),
+                recurringTime
             )
         }
 
