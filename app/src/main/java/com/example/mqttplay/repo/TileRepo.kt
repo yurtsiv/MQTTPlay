@@ -10,7 +10,6 @@ import kotlin.coroutines.suspendCoroutine
 enum class TileType {
     RECURRING,
     BUTTON,
-    UNKNOWN
 }
 
 data class RecurringTileTime(
@@ -34,11 +33,12 @@ class TileRepo {
         private val db = Firebase.firestore
         const val COLLECTION = "tiles"
 
-        private fun stringToTileType(str: String?): TileType {
-           return when(str) {
+        private fun stringToTileType(type
+                                     : String?): TileType {
+           return when(type) {
                "RECURRING" -> TileType.RECURRING
                "BUTTON" -> TileType.BUTTON
-               else -> TileType.UNKNOWN
+               else -> throw IllegalArgumentException("invalid tile type: $type")
            }
         }
 
@@ -62,26 +62,6 @@ class TileRepo {
                 document.data?.get("retainMessage") as Boolean,
                 stringToTileType(document.data?.get("type") as String),
                 recurringTime
-            )
-        }
-
-        private fun tileToHashMap(tile: Tile): HashMap<String, Any?> {
-            var recurringTime: HashMap<String, Int>? = null
-            if (tile.recurringTime != null) {
-                recurringTime = hashMapOf(
-                    "hour" to tile.recurringTime?.hour,
-                    "minute" to tile.recurringTime?.minute
-                )
-            }
-
-            return hashMapOf(
-                "brokerId" to tile.brokerId,
-                "topic" to tile.topic,
-                "value" to tile.value,
-                "qos" to tile.qos,
-                "retainMessage" to tile.retainMessage,
-                "type" to tile.type,
-                "recurringTime" to recurringTime
             )
         }
 
@@ -115,7 +95,7 @@ class TileRepo {
         private suspend fun create(tile: Tile): String {
             return suspendCoroutine { cont ->
                 db.collection(COLLECTION)
-                    .add(tileToHashMap(tile))
+                    .add(tile)
                     .addOnSuccessListener { documentReference ->
                         cont.resume(documentReference.id)
                     }
@@ -128,7 +108,7 @@ class TileRepo {
         private suspend fun edit(id: String, tile: Tile): String {
             return suspendCoroutine { cont ->
                 db.document("${COLLECTION}/${id}")
-                    .set(tileToHashMap(tile))
+                    .set(tile)
                     .addOnSuccessListener {
                         cont.resume(id ?: "")
                     }
@@ -147,7 +127,6 @@ class TileRepo {
         }
 
         suspend fun remove(id: String) {
-            // TODO: remove tiles also
             return suspendCoroutine { cont ->
                 db.document("${COLLECTION}/${id}")
                     .delete()

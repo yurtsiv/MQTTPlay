@@ -32,16 +32,6 @@ class BrokerRepo {
             )
         }
 
-        private fun brokerToHashMap(broker: Broker): HashMap<String, Any> {
-            return hashMapOf(
-                "label" to broker.label,
-                "address" to broker.address,
-                "port" to broker.port,
-                "qos" to broker.qos,
-                "useSSL" to broker.useSSL
-            )
-        }
-
         suspend fun listAll(): List<Broker> {
             return suspendCoroutine { cont ->
                 db.collection(COLLECTION)
@@ -72,7 +62,7 @@ class BrokerRepo {
         private suspend fun create(broker: Broker): String {
             return suspendCoroutine { cont ->
                 db.collection(COLLECTION)
-                    .add(brokerToHashMap(broker))
+                    .add(broker)
                     .addOnSuccessListener { documentReference ->
                         cont.resume(documentReference.id)
                     }
@@ -85,7 +75,7 @@ class BrokerRepo {
         private suspend fun edit(id: String, broker: Broker): String {
             return suspendCoroutine { cont ->
                 db.document("${COLLECTION}/${id}")
-                    .set(brokerToHashMap(broker))
+                    .set(broker)
                     .addOnSuccessListener {
                         cont.resume(id ?: "")
                     }
@@ -104,6 +94,7 @@ class BrokerRepo {
         }
 
         suspend fun remove(id: String) {
+            // TODO: remove tiles also
             return suspendCoroutine { cont ->
                 db.document("${COLLECTION}/${id}")
                     .delete()
