@@ -8,6 +8,7 @@ import com.example.mqttplay.R
 import com.example.mqttplay.adapter.ArrayAdapterWithIcon
 import com.example.mqttplay.mqtt.ConnectionStatus
 import com.example.mqttplay.mqtt.MQTTConnection
+import com.example.mqttplay.recurringMessages.MQTTMessagingService
 import com.example.mqttplay.repo.Broker
 import com.example.mqttplay.repo.BrokerRepo
 import com.example.mqttplay.repo.Tile
@@ -28,8 +29,8 @@ enum class StatusBarState {
 
 
 class ViewBrokerViewModel : ViewModel() {
-    lateinit var broker: Broker;
-    lateinit var mqttConnection: MQTTConnection;
+    lateinit var broker: Broker
+    lateinit var mqttConnection: MQTTConnection
 
     val loading = MutableLiveData<Boolean>().apply {  value = false }
     val tiles = MutableLiveData<List<Tile>>()
@@ -51,33 +52,35 @@ class ViewBrokerViewModel : ViewModel() {
     }
 
     fun initialize(context: Context, brokerId: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            loadTiles(brokerId)
-            statusBarState.postValue(StatusBarState.CONNECTING)
+        val s = context.getSystemService(MQTTMessagingService::class.java)
+        TODO("HELLO")
+//        CoroutineScope(Dispatchers.IO).launch {
+//            loadTiles(brokerId)
+//            statusBarState.postValue(StatusBarState.CONNECTING)
+//
+//            broker = BrokerRepo.fetchSingle(brokerId)
+//            mqttConnection = MQTTConnection(broker, context)
+//            mqttConnection
+//                .connect()
+//                .collect {
+//                    when(it) {
+//                        ConnectionStatus.CONNECTED ->
+//                            statusBarState.postValue(StatusBarState.CONNECTED)
+//                        ConnectionStatus.FAILED_TO_CONNECT, ConnectionStatus.CONNECTION_LOST ->
+//                            statusBarState.postValue(StatusBarState.CONNECTION_ERROR)
+//                    }
+//                }
 
-            broker = BrokerRepo.fetchSingle(brokerId)
-            mqttConnection = MQTTConnection(broker, context)
-            mqttConnection
-                .connect()
-                .collect {
-                    when(it) {
-                        ConnectionStatus.CONNECTED ->
-                            statusBarState.postValue(StatusBarState.CONNECTED)
-                        ConnectionStatus.FAILED_TO_CONNECT, ConnectionStatus.CONNECTION_LOST ->
-                            statusBarState.postValue(StatusBarState.CONNECTION_ERROR)
-                    }
-                }
-
-        }
+//        }
     }
 
     fun sendTestMessage() {
-        if (mqttConnection.connectionStatus != ConnectionStatus.CONNECTED) return
+//        if (mqttConnection.connectionStatus != ConnectionStatus.CONNECTED) return
 
-        CoroutineScope(Dispatchers.IO).launch {
-            val topic = "home/ding_dong"
-            val msg = "hello"
-            mqttConnection.publishMessage(topic, msg)
-        }
+//        CoroutineScope(Dispatchers.IO).launch {
+//            val topic = "home/ding_dong"
+//            val msg = "hello"
+//            mqttConnection.publishMessage(topic, msg)
+//        }
     }
 }

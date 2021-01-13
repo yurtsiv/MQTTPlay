@@ -1,5 +1,6 @@
 package com.example.mqttplay.view
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,6 +10,8 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.mqttplay.R
+import com.example.mqttplay.recurringMessages.RecurringMessages
+import com.example.mqttplay.repo.RecurringTileTime
 import com.example.mqttplay.repo.Tile
 import com.example.mqttplay.repo.TileRepo
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +38,9 @@ class AddRecurringTileFragment : Fragment(), RecurringTileFormFragment.OnRecurri
 
     override suspend fun onRecurringTileFormSave(tile: Tile) {
         try {
-            TileRepo.save(tile)
+            val tileId = TileRepo.save(tile)
+            RecurringMessages.scheduleMessage(context as Context, tileId, tile.recurringTime as RecurringTileTime)
+
             withContext(Dispatchers.Main) {
                 showToast(getString(R.string.tile_add_success))
                 goToBrokerView()

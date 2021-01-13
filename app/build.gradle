@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.mqttplay"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -81,4 +81,9 @@ dependencies {
 
     // Jetpack Compose Integration
     implementation "androidx.navigation:navigation-compose:1.0.0-alpha03"
+
+
+    def work_version = "2.4.0"
+
+    implementation "androidx.work:work-runtime-ktx:$work_version"
 }

@@ -87,7 +87,7 @@ class ViewBrokerFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
 
-        viewModel.mqttConnection.clearResources()
+//        viewModel.mqttConnection.clearResources()
     }
 
     private fun setupBrokersList() {
