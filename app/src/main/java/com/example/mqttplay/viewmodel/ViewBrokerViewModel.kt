@@ -1,13 +1,19 @@
 package com.example.mqttplay.viewmodel
 
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.os.Build
+import android.os.IBinder
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavDirections
 import com.example.mqttplay.R
 import com.example.mqttplay.adapter.ArrayAdapterWithIcon
-import com.example.mqttplay.mqtt.ConnectionStatus
 import com.example.mqttplay.mqtt.MQTTConnection
+import com.example.mqttplay.recurringMessages.ConnectionStatus
 import com.example.mqttplay.recurringMessages.MQTTMessagingService
 import com.example.mqttplay.repo.Broker
 import com.example.mqttplay.repo.BrokerRepo
@@ -30,7 +36,7 @@ enum class StatusBarState {
 
 class ViewBrokerViewModel : ViewModel() {
     lateinit var broker: Broker
-    lateinit var mqttConnection: MQTTConnection
+    lateinit var service: MQTTMessagingService
 
     val loading = MutableLiveData<Boolean>().apply {  value = false }
     val tiles = MutableLiveData<List<Tile>>()
@@ -51,36 +57,52 @@ class ViewBrokerViewModel : ViewModel() {
         }
     }
 
-    fun initialize(context: Context, brokerId: String) {
-        val s = context.getSystemService(MQTTMessagingService::class.java)
-        TODO("HELLO")
-//        CoroutineScope(Dispatchers.IO).launch {
-//            loadTiles(brokerId)
-//            statusBarState.postValue(StatusBarState.CONNECTING)
-//
-//            broker = BrokerRepo.fetchSingle(brokerId)
-//            mqttConnection = MQTTConnection(broker, context)
-//            mqttConnection
-//                .connect()
-//                .collect {
-//                    when(it) {
-//                        ConnectionStatus.CONNECTED ->
-//                            statusBarState.postValue(StatusBarState.CONNECTED)
-//                        ConnectionStatus.FAILED_TO_CONNECT, ConnectionStatus.CONNECTION_LOST ->
-//                            statusBarState.postValue(StatusBarState.CONNECTION_ERROR)
-//                    }
-//                }
+    fun onServiceConnected() {
+        CoroutineScope(Dispatchers.IO).launch {
+            service
+                .connect(broker)
+                .collect {
+                    when(it) {
+                        ConnectionStatus.CONNECTING ->
+                            statusBarState.postValue(StatusBarState.CONNECTING)
+                        ConnectionStatus.CONNECTED ->
+                            statusBarState.postValue(StatusBarState.CONNECTED)
+                        ConnectionStatus.FAILED_TO_CONNECT, ConnectionStatus.CONNECTION_LOST ->
+                            statusBarState.postValue(StatusBarState.CONNECTION_ERROR)
+                    }
+                }
+        }
+    }
 
-//        }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun initialize(context: Context, brokerId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            loadTiles(brokerId)
+            broker = BrokerRepo.fetchSingle(brokerId)
+
+            val intent = Intent(context, MQTTMessagingService::class.java)
+
+            context.startForegroundService(intent)
+            context.bindService(intent, object : ServiceConnection {
+                override fun onServiceConnected(componentName: ComponentName?, binder: IBinder?) {
+                    service = (binder as MQTTMessagingService.MQTTMessagingBinder).service
+                    onServiceConnected()
+                }
+
+                override fun onServiceDisconnected(p0: ComponentName?) {
+                    TODO("Not yet implemented")
+                }
+            }, Context.BIND_AUTO_CREATE)
+        }
     }
 
     fun sendTestMessage() {
 //        if (mqttConnection.connectionStatus != ConnectionStatus.CONNECTED) return
 
-//        CoroutineScope(Dispatchers.IO).launch {
-//            val topic = "home/ding_dong"
-//            val msg = "hello"
-//            mqttConnection.publishMessage(topic, msg)
-//        }
+        CoroutineScope(Dispatchers.IO).launch {
+            val topic = "home/ding_dong"
+            val msg = "hello"
+            service.publishMessage(topic, msg)
+        }
     }
 }

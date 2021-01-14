@@ -7,23 +7,52 @@ import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.mqttplay.repo.RecurringTileTime
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.*
+import kotlin.time.hours
 
 class RecurringMessages {
     companion object {
+        @RequiresApi(Build.VERSION_CODES.O)
+        fun calcNextMessageTime(time: RecurringTileTime): Long {
+            val calendar = Calendar.getInstance()
+            val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+            val currentMinute = calendar.get(Calendar.MINUTE)
+
+            val hourDiff = time.hour - currentHour
+            val minuteDiff = time.minute - currentMinute
+
+            val nextDay = hourDiff < 0 || (hourDiff == 0 && minuteDiff <= 0)
+
+            var nextMessageDate = LocalDate.now().atTime(time.hour, time.minute)
+            if (nextDay) {
+                nextMessageDate = nextMessageDate.plusDays(1)
+            }
+
+            return nextMessageDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        }
+
         @RequiresApi(Build.VERSION_CODES.M)
         fun scheduleMessage(context: Context, tileId: String, time: RecurringTileTime) {
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
             val intent = Intent(context, RecurringMessageBroadcastReceiver::class.java)
-            intent.action = "${RecurringMessageBroadcastReceiver.intentActionStartsWith}_${tileId}"
+            intent.action =
+                "${RecurringMessageBroadcastReceiver.intentActionStartsWith}_${tileId}_${System.currentTimeMillis()}"
             intent.putExtra("tileId", tileId)
 
             val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
 
-            val ALARM_DELAY_IN_SECOND = 3
-            val alarmTimeAtUTC = System.currentTimeMillis() + ALARM_DELAY_IN_SECOND * 1_000L
 
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTimeAtUTC, pendingIntent)
+            val alarmTimeAtUTC = calcNextMessageTime(time)
+
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                alarmTimeAtUTC,
+                pendingIntent
+            )
         }
     }
 }

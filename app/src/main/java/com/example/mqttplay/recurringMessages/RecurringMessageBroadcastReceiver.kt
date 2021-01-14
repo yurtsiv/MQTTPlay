@@ -1,21 +1,13 @@
 package com.example.mqttplay.recurringMessages
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import com.example.mqttplay.mqtt.ConnectionStatus
-import com.example.mqttplay.mqtt.MQTTConnection
-import com.example.mqttplay.repo.Broker
-import com.example.mqttplay.repo.BrokerRepo
+import android.content.*
+import android.util.Log
+import com.example.mqttplay.repo.RecurringTileTime
 import com.example.mqttplay.repo.Tile
 import com.example.mqttplay.repo.TileRepo
-import com.example.mqttplay.viewmodel.StatusBarState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.eclipse.paho.android.service.MqttService
 import java.lang.Exception
 
 class RecurringMessageBroadcastReceiver : BroadcastReceiver() {
@@ -23,26 +15,22 @@ class RecurringMessageBroadcastReceiver : BroadcastReceiver() {
         const val intentActionStartsWith = "SEND_RECURRING_MQTT_MESSAGE"
     }
 
-    private suspend fun sendMessage(context: Context, broker: Broker, tile: Tile) {
-        val service = context.getSystemService(MqttService::class.java)
-        TODO("SMTH")
-//        connection
-//            .connect()
-//            .collect {
-//                when (it) {
-//                    ConnectionStatus.CONNECTED -> {
-//                        connection.publishMessage(
-//                            tile.topic,
-//                            tile.value,
-//                            tile.qos,
-//                            tile.retainMessage ?: false
-//                        )
-//                    }
-//                    ConnectionStatus.FAILED_TO_CONNECT -> {
-//                        throw Exception("Failed to connect to broker")
-//                    }
-//                }
-//            }
+    lateinit var service: MQTTMessagingService
+
+    private fun sendMessage(tile: Tile) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                service.publishMessage(
+                    tile.topic,
+                    tile.value ?: "",
+                    tile.qos,
+                    tile.retainMessage ?: false
+                )
+            } catch (e: Exception) {
+                TODO("HDNEL ERROR")
+            }
+
+        }
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -53,18 +41,28 @@ class RecurringMessageBroadcastReceiver : BroadcastReceiver() {
             return;
         }
 
+        val serviceIntent = Intent(context, MQTTMessagingService::class.java)
+        val binder = peekService(context, serviceIntent) as MQTTMessagingService.MQTTMessagingBinder
+        service = binder.service
+
+        if (!service.isConnected()) {
+            // TODO: log it somewhere
+            return;
+        }
+
         val tileId = intent.extras?.get(
             "tileId"
         ) as String;
 
+        Log.v("SENDING_MESSAGE", "$tileId")
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val tile = TileRepo.fetchSingle(tileId)
-                val broker = BrokerRepo.fetchSingle(tile.brokerId)
-                sendMessage(context, broker, tile)
+                sendMessage(tile)
+                RecurringMessages.scheduleMessage(context, tileId, tile.recurringTime as RecurringTileTime)
             } catch (e: Exception) {
-                TODO("HDNEL ERROR")
-                // pass
+                // TODO: log it somewhere
             }
 
         }

@@ -3,35 +3,101 @@ package com.example.mqttplay.recurringMessages
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationCompat
 import com.example.mqttplay.R
-import com.example.mqttplay.view.MainActivity
+import com.example.mqttplay.repo.Broker
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.ProducerScope
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
 import org.eclipse.paho.android.service.MqttAndroidClient
-import org.eclipse.paho.android.service.MqttService
 import org.eclipse.paho.client.mqttv3.*
+import kotlinx.coroutines.flow.Flow
+
+enum class ConnectionStatus {
+    CONNECTING,
+    NOT_CONNECTED,
+    CONNECTED,
+    FAILED_TO_CONNECT,
+    CONNECTION_LOST
+}
 
 class MQTTMessagingService : Service() {
-    private lateinit var mqttClient: MqttAndroidClient
+    private var mqttClient: MqttAndroidClient? = null
+    private var connectionStatus: ConnectionStatus = ConnectionStatus.NOT_CONNECTED
+    var currentBroker: Broker? = null
 
-    private fun doConnect(address: String, port: String) {
-        val serverURI = "tcp://${address}:${port}";
-        mqttClient = MqttAndroidClient(applicationContext, serverURI, "kotlin_client")
+    fun isConnected(): Boolean {
+        return mqttClient?.isConnected ?: false
+    }
 
-        val options = MqttConnectOptions()
-        mqttClient.connect(options)
+    @ExperimentalCoroutinesApi
+    private fun doConnect(scope: ProducerScope<ConnectionStatus>) {
+        scope.offer(ConnectionStatus.CONNECTING)
+
+        try {
+            mqttClient?.setCallback(object : MqttCallback {
+                override fun messageArrived(topic: String?, message: MqttMessage?) {
+                }
+
+                override fun connectionLost(cause: Throwable?) {
+                    connectionStatus = ConnectionStatus.CONNECTION_LOST
+                    scope.offer(ConnectionStatus.CONNECTION_LOST)
+                }
+
+                override fun deliveryComplete(token: IMqttDeliveryToken?) {
+                }
+            })
+
+            val options = MqttConnectOptions()
+
+            mqttClient?.connect(options, null, object : IMqttActionListener {
+                override fun onSuccess(asyncActionToken: IMqttToken?) {
+                    connectionStatus = ConnectionStatus.CONNECTED
+                    scope.offer(ConnectionStatus.CONNECTED)
+                }
+
+                override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                    connectionStatus = ConnectionStatus.FAILED_TO_CONNECT
+                    scope.offer(ConnectionStatus.FAILED_TO_CONNECT)
+                }
+            })
+        } catch (e: MqttException) {
+            scope.close(e);
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun connect(broker: Broker): Flow<ConnectionStatus> {
+        val currentBroker = this.currentBroker
+        this.currentBroker = broker
+        val serverURI = "tcp://${broker.address}:${broker.port}";
+
+        return callbackFlow {
+            if (currentBroker?.id != broker.id) {
+                mqttClient?.disconnect()
+                mqttClient = MqttAndroidClient(applicationContext, serverURI, "kotlin_client")
+                doConnect(this)
+            } else if (mqttClient?.isConnected == true) {
+                offer(ConnectionStatus.CONNECTED)
+            }
+
+            awaitClose { cancel() }
+        }
     }
 
     fun publishMessage(
         topic: String,
-        message: String,
+        message: String = "",
         msgQos: Int = 0,
         retained: Boolean = false
     ) {
-        if (mqttClient == null || !mqttClient.isConnected) {
+        if (mqttClient == null || mqttClient?.isConnected != true) {
             throw Exception("Broker is not connected")
         }
 
@@ -41,7 +107,7 @@ class MQTTMessagingService : Service() {
         mqttMsg.isRetained = retained
 
         try {
-            mqttClient.publish(topic, mqttMsg, null, object : IMqttActionListener {
+            mqttClient?.publish(topic, mqttMsg, null, object : IMqttActionListener {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
                     Log.d("HELLO", "Message sent successfully")
                 }
@@ -55,12 +121,10 @@ class MQTTMessagingService : Service() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
+    class MQTTMessagingBinder(val service: MQTTMessagingService) : Binder()
 
-    override fun onBind(p0: Intent?): IBinder? {
-        return null
+    override fun onBind(intent: Intent?): IBinder? {
+        return MQTTMessagingBinder(this)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -73,11 +137,15 @@ class MQTTMessagingService : Service() {
             }
 
         val CHANNEL_ID = "my_channel_01"
-        val channel = NotificationChannel(CHANNEL_ID,
+        val channel = NotificationChannel(
+            CHANNEL_ID,
             "Channel human readable title",
-            NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager.IMPORTANCE_DEFAULT
+        );
 
-        (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel);
+        (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(
+            channel
+        );
 
         val notification: Notification = Notification.Builder(this, CHANNEL_ID)
             .setContentTitle("HELLO")
@@ -95,14 +163,6 @@ class MQTTMessagingService : Service() {
             throw Exception("Failed to start the MQTTMessagingService. Intent is not provided")
         }
 
-//        doConnect(
-//            intent.extras?.get("brokerAddress") as String,
-//            intent.extras?.get("brokerPort") as String
-//        )
-
-
         return START_NOT_STICKY
     }
-
-
 }

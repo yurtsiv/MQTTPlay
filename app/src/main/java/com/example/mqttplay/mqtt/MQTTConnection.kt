@@ -12,12 +12,12 @@ import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 import java.lang.Exception
 
-enum class ConnectionStatus {
-    NOT_CONNECTED,
-    CONNECTED,
-    FAILED_TO_CONNECT,
-    CONNECTION_LOST
-}
+//enum class ConnectionStatus {
+//    NOT_CONNECTED,
+//    CONNECTED,
+//    FAILED_TO_CONNECT,
+//    CONNECTION_LOST
+//}
 
 class MQTTConnection(val broker: Broker, val context: Context) {
 //    val serverURI = "tcp://${broker.address}:${broker.port}";
