@@ -9,17 +9,12 @@ import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavDirections
-import com.example.mqttplay.R
-import com.example.mqttplay.adapter.ArrayAdapterWithIcon
-import com.example.mqttplay.mqtt.MQTTConnection
 import com.example.mqttplay.recurringMessages.ConnectionStatus
 import com.example.mqttplay.recurringMessages.MQTTMessagingService
 import com.example.mqttplay.repo.Broker
 import com.example.mqttplay.repo.BrokerRepo
 import com.example.mqttplay.repo.Tile
 import com.example.mqttplay.repo.TileRepo
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect

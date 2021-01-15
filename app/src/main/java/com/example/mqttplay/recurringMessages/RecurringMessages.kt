@@ -8,10 +8,8 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.mqttplay.repo.RecurringTileTime
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
-import kotlin.time.hours
 
 class RecurringMessages {
     companion object {
@@ -40,7 +38,7 @@ class RecurringMessages {
 
             val intent = Intent(context, RecurringMessageBroadcastReceiver::class.java)
             intent.action =
-                "${RecurringMessageBroadcastReceiver.intentActionStartsWith}_${tileId}_${System.currentTimeMillis()}"
+                "${RecurringMessageBroadcastReceiver.SEND_MESSAGE_INTENT_ACTION}_${tileId}_${System.currentTimeMillis()}"
             intent.putExtra("tileId", tileId)
 
             val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)

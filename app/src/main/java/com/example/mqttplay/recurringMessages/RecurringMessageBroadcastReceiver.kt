@@ -1,7 +1,6 @@
 package com.example.mqttplay.recurringMessages
 
 import android.content.*
-import android.util.Log
 import com.example.mqttplay.repo.RecurringTileTime
 import com.example.mqttplay.repo.Tile
 import com.example.mqttplay.repo.TileRepo
@@ -12,29 +11,29 @@ import java.lang.Exception
 
 class RecurringMessageBroadcastReceiver : BroadcastReceiver() {
     companion object {
-        const val intentActionStartsWith = "SEND_RECURRING_MQTT_MESSAGE"
+        const val SEND_MESSAGE_INTENT_ACTION = "SEND_RECURRING_MESSAGE_INTENT_ACTION_START"
+        const val STOP_MESSAGING_SERVICE_INTENT_ACTION = "STOP_MESSAGING_SERVICE_INTENT_ACTION"
     }
 
-    lateinit var service: MQTTMessagingService
+    lateinit var mqttService: MQTTMessagingService
 
     private fun sendMessage(tile: Tile) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                service.publishMessage(
+                mqttService.publishMessage(
                     tile.topic,
                     tile.value ?: "",
                     tile.qos,
                     tile.retainMessage ?: false
                 )
             } catch (e: Exception) {
-                TODO("HDNEL ERROR")
+                // TODO: handle error somehow
             }
-
         }
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        if (context == null || intent == null || intent.action?.startsWith(intentActionStartsWith) != true || intent.extras?.get(
+        if (context == null || intent == null || intent.action?.startsWith(SEND_MESSAGE_INTENT_ACTION) != true || intent.extras?.get(
                 "tileId"
             ) == null
         ) {
@@ -43,18 +42,16 @@ class RecurringMessageBroadcastReceiver : BroadcastReceiver() {
 
         val serviceIntent = Intent(context, MQTTMessagingService::class.java)
         val binder = peekService(context, serviceIntent) as MQTTMessagingService.MQTTMessagingBinder
-        service = binder.service
+        mqttService = binder.service
 
-        if (!service.isConnected()) {
-            // TODO: log it somewhere
+        if (!mqttService.isConnected()) {
+            // TODO: log it somewhere and maybe try to reconnect
             return;
         }
 
         val tileId = intent.extras?.get(
             "tileId"
         ) as String;
-
-        Log.v("SENDING_MESSAGE", "$tileId")
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -64,7 +61,6 @@ class RecurringMessageBroadcastReceiver : BroadcastReceiver() {
             } catch (e: Exception) {
                 // TODO: log it somewhere
             }
-
         }
     }
 }

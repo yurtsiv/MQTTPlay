@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import com.example.mqttplay.R
 import com.example.mqttplay.repo.Broker
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -28,6 +29,12 @@ enum class ConnectionStatus {
 }
 
 class MQTTMessagingService : Service() {
+    companion object {
+        const val MQTT_CLIENT_ID = "mqtt_play_client"
+        const val NOTIFICATION_CHANNEL_ID = "foreground_mqtt_service_channel"
+        const val NOTIFICATION_CHANNEL_NAME = "Foreground MQTT messaging service chanel"
+    }
+
     private var mqttClient: MqttAndroidClient? = null
     private var connectionStatus: ConnectionStatus = ConnectionStatus.NOT_CONNECTED
     var currentBroker: Broker? = null
@@ -131,15 +138,9 @@ class MQTTMessagingService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        val pendingIntent: PendingIntent =
-            Intent(this, MQTTMessagingService::class.java).let { notificationIntent ->
-                PendingIntent.getActivity(this, 0, notificationIntent, 0)
-            }
-
-        val CHANNEL_ID = "my_channel_01"
         val channel = NotificationChannel(
-            CHANNEL_ID,
-            "Channel human readable title",
+            NOTIFICATION_CHANNEL_ID,
+            NOTIFICATION_CHANNEL_NAME,
             NotificationManager.IMPORTANCE_DEFAULT
         );
 
@@ -147,12 +148,12 @@ class MQTTMessagingService : Service() {
             channel
         );
 
-        val notification: Notification = Notification.Builder(this, CHANNEL_ID)
-            .setContentTitle("HELLO")
-            .setContentText("THERE")
-            .setSmallIcon(R.drawable.button)
-            .setContentIntent(pendingIntent)
-            .setTicker("TICKER")
+        // TODO: add stop button and content intent
+        val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+            .setContentTitle(getString(R.string.foreground_service_notification_title))
+            .setContentText(getString(R.string.foreground_service_notification_text))
+            .setSmallIcon(R.drawable.dashboard)
+            .setTicker(getString(R.string.foreground_service_notification_text))
             .build()
 
         startForeground(1, notification)

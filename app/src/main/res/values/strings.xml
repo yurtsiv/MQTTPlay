@@ -3,7 +3,7 @@
 
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
-    <string name="generic_error">An error occured</string>
+    <string name="generic_error">An error occurred</string>
 
     <string name="connected_to_broker">Connected</string>
     <string name="failed_to_connect">Failed to connect</string>
@@ -16,6 +16,8 @@
     <string name="edit_broker_activity_title">Edit broker</string>
     <string name="add_broker_activity_title">Add broker</string>
     <string name="add_tile_activity_title">Add tile</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="foreground_service_notification_title">MQTT background connection</string>
+    <string name="foreground_service_notification_text">You can stop it, but recurring messages will not be sent</string>
+    <string name="stop_foreground_service_btn_title">Stop</string>
 </resources>
