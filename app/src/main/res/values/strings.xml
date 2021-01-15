@@ -20,4 +20,9 @@
     <string name="foreground_service_notification_title">MQTT background connection</string>
     <string name="foreground_service_notification_text">You can stop it, but recurring messages will not be sent</string>
     <string name="stop_foreground_service_btn_title">Stop</string>
+    <string name="broker_connecting">Connecting...</string>
+    <string name="broker_connected">Connected</string>
+    <string name="broker_connection_failure">Failed to connect</string>
+    <string name="recurring_tile">Recurring</string>
+    <string name="button_tile">Button</string>
 </resources>

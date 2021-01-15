@@ -30,7 +30,6 @@ enum class ConnectionStatus {
 
 class MQTTMessagingService : Service() {
     companion object {
-        const val MQTT_CLIENT_ID = "mqtt_play_client"
         const val NOTIFICATION_CHANNEL_ID = "foreground_mqtt_service_channel"
         const val NOTIFICATION_CHANNEL_NAME = "Foreground MQTT messaging service chanel"
     }

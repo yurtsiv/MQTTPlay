@@ -64,7 +64,7 @@ class ViewBrokerFragment : Fragment() {
 
         addTileDialogItems = listOf(
             AddTileDialogItem(
-                "Recurring",
+                getString(R.string.recurring_tile),
                 R.drawable.time,
                 ViewBrokerFragmentDirections.actionViewBrokerFragmentToAddRecurringTileFragment(
                     args.brokerId,
@@ -73,7 +73,7 @@ class ViewBrokerFragment : Fragment() {
                 )
             ),
             AddTileDialogItem(
-                "Button",
+                getString(R.string.button_tile),
                 R.drawable.button,
                 ViewBrokerFragmentDirections.actionViewBrokerFragmentToBrokersListFragment()
             )
@@ -82,12 +82,6 @@ class ViewBrokerFragment : Fragment() {
         trackStatusBarStateChange()
         setupAddTileBtn()
         setupBrokersList()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-//        viewModel.mqttConnection.clearResources()
     }
 
     private fun setupBrokersList() {
@@ -128,14 +122,14 @@ class ViewBrokerFragment : Fragment() {
                     statusBar.setBackgroundColor(color)
                     statusBar.visibility = View.VISIBLE
                     loader.visibility = View.VISIBLE
-                    statusBarTxt.text = "Connecting..."
+                    statusBarTxt.text = getString(R.string.broker_connecting)
                 }
                 StatusBarState.CONNECTED -> {
                     val color = ContextCompat.getColor(context as Context, R.color.success)
                     statusBar.setBackgroundColor(color)
                     statusBar.visibility = View.VISIBLE
                     loader.visibility = View.GONE
-                    statusBarTxt.text = "Connected"
+                    statusBarTxt.text = getString(R.string.broker_connected)
 
                     // Hide status bar after 2 seconds
                     Handler(Looper.getMainLooper()).postDelayed({
@@ -151,7 +145,7 @@ class ViewBrokerFragment : Fragment() {
                     statusBar.setBackgroundColor(color)
                     statusBar.visibility = View.VISIBLE
                     loader.visibility = View.GONE
-                    statusBarTxt.text = "Failed to connect"
+                    statusBarTxt.text = getString(R.string.broker_connection_failure)
                 }
             }
         }
