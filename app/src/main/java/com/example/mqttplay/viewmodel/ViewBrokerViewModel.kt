@@ -11,10 +11,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mqttplay.recurringMessages.ConnectionStatus
 import com.example.mqttplay.recurringMessages.MQTTMessagingService
-import com.example.mqttplay.repo.Broker
-import com.example.mqttplay.repo.BrokerRepo
-import com.example.mqttplay.repo.Tile
-import com.example.mqttplay.repo.TileRepo
+import com.example.mqttplay.repo.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -33,7 +30,7 @@ class ViewBrokerViewModel : ViewModel() {
     lateinit var broker: Broker
     lateinit var service: MQTTMessagingService
 
-    val loading = MutableLiveData<Boolean>().apply {  value = false }
+    private val loading = MutableLiveData<Boolean>().apply {  value = false }
     val tiles = MutableLiveData<List<Tile>>()
     val toast = MutableLiveData<String>()
     val statusBarState = MutableLiveData<StatusBarState>()
@@ -91,13 +88,21 @@ class ViewBrokerViewModel : ViewModel() {
         }
     }
 
-    fun sendTestMessage() {
-//        if (mqttConnection.connectionStatus != ConnectionStatus.CONNECTED) return
+    fun onTileCLick(tile: Tile) {
+        if (!service.isConnected()) {
+            toast.value = "Not connected to the broker"
+            return
+        }
 
-        CoroutineScope(Dispatchers.IO).launch {
-            val topic = "home/ding_dong"
-            val msg = "hello"
-            service.publishMessage(topic, msg)
+        when (tile.type) {
+            TileType.BUTTON ->
+                service.publishMessage(
+                    tile.topic,
+                    tile.value,
+                    tile.qos,
+                    tile.retainMessage
+                )
+            else -> {}
         }
     }
 }

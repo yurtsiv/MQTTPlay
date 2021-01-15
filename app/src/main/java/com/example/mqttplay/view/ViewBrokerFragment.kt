@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mqttplay.R
 import com.example.mqttplay.adapter.ArrayAdapterWithIcon
-import com.example.mqttplay.adapter.BrokerItemAdapter
 import com.example.mqttplay.adapter.TileItemAdapter
 import com.example.mqttplay.databinding.FragmentViewBrokerBinding
 import com.example.mqttplay.viewmodel.StatusBarState
@@ -42,7 +41,7 @@ class ViewBrokerFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         super.onCreate(savedInstanceState)
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_view_broker, container, false)
@@ -68,23 +67,27 @@ class ViewBrokerFragment : Fragment() {
                 R.drawable.time,
                 ViewBrokerFragmentDirections.actionViewBrokerFragmentToAddRecurringTileFragment(
                     args.brokerId,
+                    args.brokerLabel,
                     null,
-                    args.brokerLabel
                 )
             ),
             AddTileDialogItem(
                 getString(R.string.button_tile),
                 R.drawable.button,
-                ViewBrokerFragmentDirections.actionViewBrokerFragmentToBrokersListFragment()
+                ViewBrokerFragmentDirections.actionViewBrokerFragmentToButtonTileFormFragment(
+                    args.brokerId,
+                    args.brokerLabel,
+                    null
+                )
             )
         )
 
         trackStatusBarStateChange()
         setupAddTileBtn()
-        setupBrokersList()
+        setupTilesList()
     }
 
-    private fun setupBrokersList() {
+    private fun setupTilesList() {
         if (context == null) return;
 
         viewModel.tiles.observe(viewLifecycleOwner) { tiles ->
@@ -92,8 +95,8 @@ class ViewBrokerFragment : Fragment() {
 
             recyclerView?.layoutManager = GridLayoutManager(context, 2);
 
-            val adapter = TileItemAdapter(context as Context, tiles) { _ ->
-                {}
+            val adapter = TileItemAdapter(context as Context, tiles) {
+                viewModel.onTileCLick(it)
             }
 
             recyclerView?.adapter = adapter

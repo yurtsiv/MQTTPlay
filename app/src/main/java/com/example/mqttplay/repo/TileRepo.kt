@@ -26,7 +26,7 @@ data class Tile(
     val qos: Int,
     val retainMessage: Boolean?,
     val type: TileType,
-    val recurringTime: RecurringTileTime?
+    val recurringTime: RecurringTileTime? = null
 )
 
 class TileRepo {

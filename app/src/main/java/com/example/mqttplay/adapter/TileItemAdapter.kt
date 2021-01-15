@@ -2,10 +2,10 @@ package com.example.mqttplay.adapter
 
 import android.content.Context
 import android.view.*
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mqttplay.R
-import com.example.mqttplay.repo.Broker
 import com.example.mqttplay.repo.RecurringTileTime
 import com.example.mqttplay.repo.Tile
 import com.example.mqttplay.repo.TileType
@@ -20,6 +20,7 @@ class TileItemAdapter(
         View.OnCreateContextMenuListener {
 
         val titleView: TextView = view.findViewById(R.id.tile_list_item_title)
+        val iconView: ImageView = view.findViewById(R.id.tile_list_item_icon)
 
         init {
             view.setOnCreateContextMenuListener(this)
@@ -65,17 +66,25 @@ class TileItemAdapter(
 
                 return "$h:$m"
             }
-            else ->
-                "Test"
+            TileType.BUTTON ->
+                 tile.topic
+        }
+    }
+
+    private fun getIcon(tile: Tile): Int {
+        return when (tile.type) {
+            TileType.RECURRING -> R.drawable.time
+            TileType.BUTTON -> R.drawable.button
         }
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        val item = dataSet[position]
+        val tile = dataSet[position]
 
-        holder.titleView.text = getTitleText(item)
+        holder.titleView.text = getTitleText(tile)
+        holder.iconView.setImageResource(getIcon(tile))
         holder.itemView.setOnClickListener {
-            onItemClick(item)
+            onItemClick(tile)
         };
     }
 

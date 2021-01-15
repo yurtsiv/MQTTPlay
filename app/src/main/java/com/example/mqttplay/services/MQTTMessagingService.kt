@@ -99,18 +99,18 @@ class MQTTMessagingService : Service() {
 
     fun publishMessage(
         topic: String,
-        message: String = "",
-        msgQos: Int = 0,
-        retained: Boolean = false
+        message: String?,
+        msgQos: Int?,
+        retained: Boolean?
     ) {
         if (mqttClient == null || mqttClient?.isConnected != true) {
             throw Exception("Broker is not connected")
         }
 
         val mqttMsg = MqttMessage()
-        mqttMsg.payload = message.toByteArray()
-        mqttMsg.qos = msgQos
-        mqttMsg.isRetained = retained
+        mqttMsg.payload = message?.toByteArray()
+        mqttMsg.qos = msgQos ?: 0
+        mqttMsg.isRetained = retained ?: false
 
         try {
             mqttClient?.publish(topic, mqttMsg, null, object : IMqttActionListener {

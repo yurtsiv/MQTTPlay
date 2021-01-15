@@ -23,7 +23,7 @@
         tools:layout_editor_absoluteY="0dp">
 
         <fragment
-            android:id="@+id/tile_form_common_fields_fragment"
+            android:id="@+id/recurring_tile_form_common_fields"
             android:name="com.example.mqttplay.view.TileFormCommonFieldsFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -45,8 +45,8 @@
             android:id="@+id/save_tile_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
             android:enabled="@{liveData.saveBtnEnabled}"
-            android:text="Save" />
+            android:text="@string/save" />
     </LinearLayout>
 </layout>

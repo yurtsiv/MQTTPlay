@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.ButtonTileFormFragment">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="liveData"
+            type="com.example.mqttplay.viewmodel.ButtonTileFormViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="right"
+        android:orientation="vertical">
+
+        <fragment
+            android:id="@+id/button_tile_form_common_fields"
+            android:name="com.example.mqttplay.view.TileFormCommonFieldsFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/save_button_tile_form_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:enabled="@{liveData.saveBtnEnabled}"
+            android:text="@string/save" />
+    </LinearLayout>
+</layout>

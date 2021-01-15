@@ -38,6 +38,9 @@
             android:id="@+id/action_viewBrokerFragment_to_addRecurringTileFragment"
             app:destination="@id/addRecurringTileFragment"
             />
+        <action
+            android:id="@+id/action_viewBrokerFragment_to_buttonTileFormFragment"
+            app:destination="@id/buttonTileFormFragment" />
     </fragment>
     <fragment
         android:id="@+id/editBrokerFragment2"
@@ -73,11 +76,30 @@
             android:name="brokerId"
             app:argType="string" />
         <argument
+            android:name="brokerLabel"
+            app:argType="string" />
+        <argument
             android:name="tileId"
             app:argType="string"
             app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/buttonTileFormFragment"
+        android:name="com.example.mqttplay.view.ButtonTileFormFragment"
+        android:label="@string/button_tile_activity_title"
+        tools:layout="@layout/fragment_button_tile_form">
+        <action
+            android:id="@+id/action_buttonTileFormFragment_to_viewBrokerFragment"
+            app:destination="@id/viewBrokerFragment" />
+        <argument
+            android:name="brokerId"
+            app:argType="string" />
         <argument
             android:name="brokerLabel"
             app:argType="string" />
+        <argument
+            android:name="tileId"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 </navigation>

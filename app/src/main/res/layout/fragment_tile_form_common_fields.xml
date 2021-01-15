@@ -20,7 +20,7 @@
         tools:layout_editor_absoluteY="0dp">
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/topicTextField"
+            android:id="@+id/tile_topic_text_field"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
