@@ -19,6 +19,7 @@
     <string name="add_broker_activity_title">Add broker</string>
     <string name="add_tile_activity_title">Add tile</string>
     <string name="button_tile_activity_title">Button tile</string>
+    <string name="recurring_tile_activity_title">Recurring tile</string>
 
     <string name="foreground_service_notification_title">MQTT background connection</string>
     <string name="foreground_service_notification_text">You can stop it, but recurring messages will not be sent</string>

@@ -1,5 +1,6 @@
 package com.example.mqttplay.view
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,6 +14,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.mqttplay.R
 import com.example.mqttplay.databinding.FragmentButtonTileFormBinding
+import com.example.mqttplay.recurringMessages.RecurringMessages
+import com.example.mqttplay.repo.RecurringTileTime
 import com.example.mqttplay.repo.TileRepo
 import com.example.mqttplay.viewmodel.ButtonTileFormViewModel
 import com.example.mqttplay.viewmodel.TileFormCommonFieldsViewModel
@@ -22,7 +25,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ButtonTileFormFragment : Fragment() {
-    private val args: AddRecurringTileFragmentArgs by navArgs()
+    private val args: ButtonTileFormFragmentArgs by navArgs()
     lateinit var binding: FragmentButtonTileFormBinding
     private val viewModel: ButtonTileFormViewModel by viewModels()
     private val commonFieldsViewModel: TileFormCommonFieldsViewModel by viewModels()
@@ -93,6 +96,9 @@ class ButtonTileFormFragment : Fragment() {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     viewModel.saving.postValue(true)
+                    val tile = viewModel.formDataToTile(commonFieldsViewModel)
+                    val tileId = TileRepo.save(tile)
+                    RecurringMessages.scheduleMessage(context as Context, tileId, tile.recurringTime as RecurringTileTime)
                     TileRepo.save(viewModel.formDataToTile(commonFieldsViewModel))
 
                     withContext(Dispatchers.Main) {
@@ -102,7 +108,7 @@ class ButtonTileFormFragment : Fragment() {
                 } catch (e: Exception) {
                     viewModel.saving.postValue(false)
                     withContext(Dispatchers.Main) {
-                        // TODO: more specific errors
+                        // TODO: more specific error
                         showToast(e.message ?: getString(R.string.generic_error))
                     }
                 }

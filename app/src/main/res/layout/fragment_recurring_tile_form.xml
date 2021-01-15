@@ -42,7 +42,7 @@
             android:background="?attr/colorButtonNormal" />
 
         <Button
-            android:id="@+id/save_tile_btn"
+            android:id="@+id/save_recurring_tile_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"

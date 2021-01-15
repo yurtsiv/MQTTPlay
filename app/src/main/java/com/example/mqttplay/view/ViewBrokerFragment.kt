@@ -78,7 +78,7 @@ class ViewBrokerFragment : Fragment() {
             AddTileDialogItem(
                 getString(R.string.recurring_tile),
                 R.drawable.time,
-                ViewBrokerFragmentDirections.actionViewBrokerFragmentToAddRecurringTileFragment(
+                ViewBrokerFragmentDirections.actionViewBrokerFragmentToRecurringTileFormFragment(
                     args.brokerId,
                     args.brokerLabel,
                     null,
@@ -202,7 +202,15 @@ class ViewBrokerFragment : Fragment() {
 
                 findNavController().navigate(action)
             }
-            TileType.RECURRING -> {}
+            TileType.RECURRING -> {
+                val action = ViewBrokerFragmentDirections.actionViewBrokerFragmentToRecurringTileFormFragment(
+                    viewModel.broker.id as String,
+                    viewModel.broker.label,
+                    tile.id
+                )
+
+                findNavController().navigate(action)
+            }
         }
     }
 

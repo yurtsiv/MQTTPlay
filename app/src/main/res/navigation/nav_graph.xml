@@ -35,11 +35,11 @@
             android:name="brokerLabel"
             app:argType="string" />
         <action
-            android:id="@+id/action_viewBrokerFragment_to_addRecurringTileFragment"
-            app:destination="@id/addRecurringTileFragment" />
-        <action
             android:id="@+id/action_viewBrokerFragment_to_buttonTileFormFragment"
             app:destination="@id/buttonTileFormFragment" />
+        <action
+            android:id="@+id/action_viewBrokerFragment_to_recurringTileFormFragment"
+            app:destination="@id/recurringTileFormFragment" />
     </fragment>
     <fragment
         android:id="@+id/editBrokerFragment2"
@@ -63,12 +63,12 @@
             app:destination="@id/brokersListFragment" />
     </fragment>
     <fragment
-        android:id="@+id/addRecurringTileFragment"
-        android:name="com.example.mqttplay.view.AddRecurringTileFragment"
-        android:label="Recurring tile"
-        tools:layout="@layout/fragment_add_recurring_tile">
+        android:id="@+id/buttonTileFormFragment"
+        android:name="com.example.mqttplay.view.ButtonTileFormFragment"
+        android:label="@string/button_tile_activity_title"
+        tools:layout="@layout/fragment_button_tile_form">
         <action
-            android:id="@+id/action_addRecurringTileFragment_to_viewBrokerFragment"
+            android:id="@+id/action_buttonTileFormFragment_to_viewBrokerFragment"
             app:destination="@id/viewBrokerFragment"
             app:popUpTo="@id/brokersListFragment" />
         <argument
@@ -83,12 +83,11 @@
             app:nullable="true" />
     </fragment>
     <fragment
-        android:id="@+id/buttonTileFormFragment"
-        android:name="com.example.mqttplay.view.ButtonTileFormFragment"
-        android:label="@string/button_tile_activity_title"
-        tools:layout="@layout/fragment_button_tile_form">
+        android:id="@+id/recurringTileFormFragment"
+        android:name="com.example.mqttplay.view.RecurringTileFormFragment"
+        android:label="@string/recurring_tile_activity_title">
         <action
-            android:id="@+id/action_buttonTileFormFragment_to_viewBrokerFragment"
+            android:id="@+id/action_recurringTileFormFragment_to_viewBrokerFragment"
             app:destination="@id/viewBrokerFragment"
             app:popUpTo="@id/brokersListFragment" />
         <argument
