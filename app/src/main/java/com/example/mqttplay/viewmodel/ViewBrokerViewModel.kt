@@ -105,4 +105,17 @@ class ViewBrokerViewModel : ViewModel() {
             else -> {}
         }
     }
+
+    fun removeTile(tile: Tile) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                if (tile.id != null) {
+                    TileRepo.remove(tile.id)
+                    tiles.postValue(tiles.value?.filter { it.id != tile.id })
+                }
+            } catch (e: Exception) {
+                toast.postValue(e.message)
+            }
+        }
+    }
 }

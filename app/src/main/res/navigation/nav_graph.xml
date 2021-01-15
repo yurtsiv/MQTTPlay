@@ -36,8 +36,7 @@
             app:argType="string" />
         <action
             android:id="@+id/action_viewBrokerFragment_to_addRecurringTileFragment"
-            app:destination="@id/addRecurringTileFragment"
-            />
+            app:destination="@id/addRecurringTileFragment" />
         <action
             android:id="@+id/action_viewBrokerFragment_to_buttonTileFormFragment"
             app:destination="@id/buttonTileFormFragment" />
@@ -90,7 +89,8 @@
         tools:layout="@layout/fragment_button_tile_form">
         <action
             android:id="@+id/action_buttonTileFormFragment_to_viewBrokerFragment"
-            app:destination="@id/viewBrokerFragment" />
+            app:destination="@id/viewBrokerFragment"
+            app:popUpTo="@id/brokersListFragment" />
         <argument
             android:name="brokerId"
             app:argType="string" />

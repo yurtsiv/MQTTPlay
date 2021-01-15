@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
@@ -24,6 +25,9 @@ import com.example.mqttplay.R
 import com.example.mqttplay.adapter.ArrayAdapterWithIcon
 import com.example.mqttplay.adapter.TileItemAdapter
 import com.example.mqttplay.databinding.FragmentViewBrokerBinding
+import com.example.mqttplay.repo.Broker
+import com.example.mqttplay.repo.Tile
+import com.example.mqttplay.repo.TileType
 import com.example.mqttplay.viewmodel.StatusBarState
 import com.example.mqttplay.viewmodel.ViewBrokerViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -63,21 +67,21 @@ class ViewBrokerFragment : Fragment() {
 
         addTileDialogItems = listOf(
             AddTileDialogItem(
-                getString(R.string.recurring_tile),
-                R.drawable.time,
-                ViewBrokerFragmentDirections.actionViewBrokerFragmentToAddRecurringTileFragment(
-                    args.brokerId,
-                    args.brokerLabel,
-                    null,
-                )
-            ),
-            AddTileDialogItem(
                 getString(R.string.button_tile),
                 R.drawable.button,
                 ViewBrokerFragmentDirections.actionViewBrokerFragmentToButtonTileFormFragment(
                     args.brokerId,
                     args.brokerLabel,
                     null
+                )
+            ),
+            AddTileDialogItem(
+                getString(R.string.recurring_tile),
+                R.drawable.time,
+                ViewBrokerFragmentDirections.actionViewBrokerFragmentToAddRecurringTileFragment(
+                    args.brokerId,
+                    args.brokerLabel,
+                    null,
                 )
             )
         )
@@ -167,5 +171,49 @@ class ViewBrokerFragment : Fragment() {
             )
         }
         builder.create().show()
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.remove_tile_menu_item -> {
+                val tile = viewModel.tiles.value?.get(item.groupId)
+
+                if (tile != null) {
+                    confirmTileRemove(tile)
+                }
+            }
+            R.id.edit_tile_menu_item -> {
+                val tile = viewModel.tiles.value?.get(item.groupId)
+                if (tile != null) goToTileEdit(tile)
+            }
+        }
+
+        return false;
+    }
+
+    private fun goToTileEdit(tile: Tile) {
+        when (tile.type) {
+            TileType.BUTTON -> {
+                val action = ViewBrokerFragmentDirections.actionViewBrokerFragmentToButtonTileFormFragment(
+                    viewModel.broker.id as String,
+                    viewModel.broker.label,
+                    tile.id
+                )
+
+                findNavController().navigate(action)
+            }
+            TileType.RECURRING -> {}
+        }
+    }
+
+    private fun confirmTileRemove(tile: Tile) {
+        val mBuilder = MaterialAlertDialogBuilder(view?.context as Context)
+        // TODO: maybe display tile title
+        mBuilder.setMessage(getString(R.string.tile_remove_confirm))
+        mBuilder.setPositiveButton(R.string.yes) { _, _ ->
+            viewModel.removeTile(tile)
+        }
+        mBuilder.setNegativeButton(R.string.cancel) { _, _ -> }
+        mBuilder.show()
     }
 }

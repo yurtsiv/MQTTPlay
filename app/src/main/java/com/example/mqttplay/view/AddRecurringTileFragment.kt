@@ -42,7 +42,7 @@ class AddRecurringTileFragment : Fragment(), RecurringTileFormFragment.OnRecurri
             RecurringMessages.scheduleMessage(context as Context, tileId, tile.recurringTime as RecurringTileTime)
 
             withContext(Dispatchers.Main) {
-                showToast(getString(R.string.tile_add_success))
+                showToast(getString(R.string.tile_save_success))
                 goToBrokerView()
             }
         } catch (e: Exception) {

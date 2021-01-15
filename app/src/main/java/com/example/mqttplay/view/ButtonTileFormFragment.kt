@@ -48,6 +48,10 @@ class ButtonTileFormFragment : Fragment() {
             args.tileId
         )
 
+        if (args.tileId != null) {
+            fillForm(args.tileId as String)
+        }
+
         viewModel.saving.observe(viewLifecycleOwner) {
             viewModel.saveBtnEnabled.value = isSaveBtnEnabled()
         }
@@ -56,6 +60,19 @@ class ButtonTileFormFragment : Fragment() {
         }
 
         setupSaveBtn()
+    }
+
+    private fun fillForm(tileId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val tile = TileRepo.fetchSingle(tileId)
+                commonFieldsViewModel.populateFields(tile)
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    showToast(e.message ?: getString(R.string.generic_error))
+                }
+            }
+        }
     }
 
     private fun isSaveBtnEnabled(): Boolean {
@@ -79,10 +96,11 @@ class ButtonTileFormFragment : Fragment() {
                     TileRepo.save(viewModel.formDataToTile(commonFieldsViewModel))
 
                     withContext(Dispatchers.Main) {
-                        showToast(getString(R.string.tile_add_success))
+                        showToast(getString(R.string.tile_save_success))
                         goToBrokerView()
                     }
                 } catch (e: Exception) {
+                    viewModel.saving.postValue(false)
                     withContext(Dispatchers.Main) {
                         // TODO: more specific errors
                         showToast(e.message ?: getString(R.string.generic_error))

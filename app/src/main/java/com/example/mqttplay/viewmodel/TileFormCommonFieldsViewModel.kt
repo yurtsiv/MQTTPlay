@@ -4,6 +4,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mqttplay.R
+import com.example.mqttplay.repo.Tile
 
 class TileFormCommonFieldsViewModel : ViewModel() {
     // TODO: don't repeat the code (BrokerFormViewModel)
@@ -36,5 +37,12 @@ class TileFormCommonFieldsViewModel : ViewModel() {
     private fun isTopicValid(): Boolean {
         val value: String? = topic.value
         return value != null && value.isNotBlank()
+    }
+
+    fun populateFields(tile: Tile) {
+        topic.postValue(tile.topic)
+        value.postValue(tile.value)
+        qualityOfServiceID.postValue(QOS_VALUE_TO_ID[tile.qos])
+        retainMessage.postValue(tile.retainMessage)
     }
 }

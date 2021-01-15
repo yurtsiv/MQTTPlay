@@ -33,15 +33,15 @@ class TileItemAdapter(
         ) {
             menu?.add(
                 adapterPosition,
-                R.id.edit_broker_menu_item,
+                R.id.edit_tile_menu_item,
                 Menu.NONE,
-                R.string.broker_menu_edit
+                R.string.tile_menu_edit
             )
             menu?.add(
                 adapterPosition,
-                R.id.remove_broker_menu_item,
+                R.id.remove_tile_menu_item,
                 Menu.NONE,
-                R.string.broker_menu_remove
+                R.string.tile_menu_remove
             )
         }
     }
