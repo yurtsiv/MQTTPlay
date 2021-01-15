@@ -14,6 +14,9 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        setTheme(R.style.Theme_MQTTPlay)
+
         setContentView(R.layout.activity_main)
 
         supportActionBar?.hide()

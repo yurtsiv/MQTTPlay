@@ -1,14 +1,27 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.MQTTPlay" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@color/black</item>
+
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#512DA8</item>
-        <item name="colorPrimaryVariant">#673AB7</item>
+        <item name="colorPrimary">#673AB7</item>
+        <item name="colorPrimaryVariant">#3F51B5</item>
         <item name="colorOnPrimary">@color/white</item>
+
         <!-- Secondary brand color. -->
         <item name="colorSecondary">#4CAF50</item>
         <item name="colorSecondaryVariant">#307B33</item>
         <item name="colorOnSecondary">@color/white</item>
-        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="toolbarTheme" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="colorPrimary">@color/white</item>
+    </style>
+
+    <style name="splashScreenTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowBackground" >
+            @drawable/splash_image
+        </item>
+        <item name="android:statusBarColor">@color/white</item>
     </style>
 </resources>
